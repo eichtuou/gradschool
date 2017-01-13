@@ -43,7 +43,7 @@ for i in index:
     line=line.split()
     buff=str(line[0])+' '+str(line[1])+' '+str(line[2])+'   '+str(line[6])+' '+str(line[7])+'   '+str(line[8])+'\n'
     outf.write(buff)
-    occ=[]     # occupied orbitals
+    occ=[]      # occupied orbitals
     virt=[]     # virtual orbitals
     coeff=[]    # coeffient
     contr=[]    # contribution
