@@ -1,6 +1,5 @@
 '''
-This script generate submission scripts for density calculations\
-for either of our clusters.
+This script generate submission scripts for density calculations for either of our clusters.
 '''
 
 #-------------------- user input section --------------------!
