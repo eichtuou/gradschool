@@ -1,10 +1,9 @@
 '''
-This script gets excitations of interest from a TD-DFT calculation.
+This script gets excitations of interest from a log file of a TD-DFT calculation.
 '''
 import sys
 import linecache
 
-# give log file as argument
 # check
 if len(sys.argv) == 1:
     print "Error! No log file specified."
@@ -17,12 +16,9 @@ if logfile[-4:] != ".log":
     sys.exit()
 
 
-# start program
-print "Reading file: "+logfile
-print "..."
-
 # count number of lines in log file
 numlines=sum(1 for line in open(logfile))
+
 # get excitations of interest
 states=[]
 index=[]
@@ -37,7 +33,7 @@ for i in range(1,numlines+1):
             index.append(int(i))
 
 # write info to file
-outf=open(logfile[:-4]+'_analyzedExcitations.dat','w')
+outf=open(logfile[:-4]+'_excitations.dat','w')
 for i in index:
     line=linecache.getline(logfile,i).strip()
     line=line.split()
@@ -47,11 +43,14 @@ for i in index:
     virt=[]     # virtual orbitals
     coeff=[]    # coeffient
     contr=[]    # contribution
+
+    # get orbital contributions from each excited state
     for j in range(1,100):
         k=i
         k+=j
         buff=linecache.getline(logfile,k).strip()
-        # get orbital contributions from each excited state
+        # log file has excitations as: occ ->virt 
+        # and we need them as: occ -> virt 
         if '->' in buff:
             buff=buff.replace('->','-> ')
             buff=buff.split()
@@ -65,6 +64,7 @@ for i in index:
             contr.append(buff2)
         if 'Excited State' in buff:
             break
+
     # sort contributions in ascending virtual orbitals
     virt,occ,coeff,contr=(list(t) for t in zip(*sorted(zip(virt,occ,coeff,contr))))
     for k in range(0,len(occ)):
@@ -72,6 +72,4 @@ for i in index:
         outf.write(buff)
     outf.write('\n')
 outf.close()
-print "Done."
-print "Excitations of interest located in "+logfile[:-4]+"_analyzedExcitations.dat"
 
