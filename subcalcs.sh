@@ -2,7 +2,7 @@
 
 # This script submits multiple submission scripts into the cluster. It calls a python 
 # script that generates the submission scripts for each calculation, then organizes the 
-# calculation in individual directories and submits the calculations from each directory. 
+# calculations in individual directories and submits the calculations from each directory. 
 
 # master path
 mypath=`pwd`
