@@ -111,7 +111,7 @@ for i in flist:
 %nproc=8\n\
 #p  '+i[:5]+'/gen\n'
 
-        # write input files
+        # write files
         filename=cname+'_'+i+'.com'
         fo=open(filename, 'w')
         buff=route1+disp+route2+title+coords
@@ -124,6 +124,7 @@ for i in flist:
 %mem=16GB\n\
 %nproc=8\n\
 #p  '+i+'/gen\n'
+
         filename=cname+'_'+i+'.com'
         fo=open(filename, 'w')
         buff=route1+route2+title+coords
