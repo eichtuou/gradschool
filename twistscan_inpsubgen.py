@@ -46,7 +46,7 @@ SDD\n'+basis2[:-6]+'\
 \n'
 
 # get info, generate new input files and submission scripts 
-for i in range(30,31):
+for i in range(30,91):
     ifile=comp+'_'+str(i)+'.com'
     sfile='subg09_'+str(i)
     header='\
