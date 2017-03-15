@@ -9,6 +9,8 @@ import shutil as sh
 subs='par'              #substituent
 queue='single_chassis'  #name of queue
 time='96:00'            #computing time
+start=30                #min point
+end=90                  #max point
 #--------------------------------------!
 
 
@@ -46,7 +48,7 @@ SDD\n'+basis2[:-6]+'\
 \n'
 
 # get info, generate new input files and submission scripts 
-for i in range(30,91):
+for i in range(start,end+1):
     ifile=comp+'_'+str(i)+'.com'
     sfile='subg09_'+str(i)
     header='\
