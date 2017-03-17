@@ -6,7 +6,7 @@ import os
 import shutil as sh 
 
 #------- User input section -----------!
-subs='br'               #substituent
+subs='i'                #substituent
 queue='cos'             #name of queue
 time='96:00'            #computing time
 #--------------------------------------!
@@ -49,7 +49,7 @@ SDD\n'+basis2[:-6]+'\
 for i in range(0,23):
     for j in range(0,10):
         if i == 22 and j > 0:
-            continue
+            break 
         ifile=comp+'_'+str(i)+'p'+str(j)+'.com'
         sfile='subg09_'+str(i)+'p'+str(j)
         header='\
@@ -79,6 +79,8 @@ for i in range(0,23):
             fo.write(header)
             fo.write(buff)
             fo.write(basis0)
+            if subs == 'i':
+                fo.write('\n')
 
         # generate submission scripts
         with open(sfile,'w') as fo:

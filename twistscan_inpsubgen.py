@@ -78,6 +78,8 @@ for i in range(start,end+1):
         fo.write(header)
         fo.write(buff)
         fo.write(basis0)
+        if subs == 'i':
+            fo.write('\n')
 
     # generate submission scripts
     with open(sfile,'w') as fo:
