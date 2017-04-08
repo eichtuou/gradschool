@@ -10,9 +10,9 @@ import os
 import shutil as sh
 
 #---------------USER INPUT SECTION---------------!
-cluster='murgas'                  # henry, murgas
-queue=''                          # name of queue
-prefix='biCA_slab_tarj_'          # complex name
+cluster='henry'                   # henry, murgas
+queue='single_chassis'            # name of queue
+prefix='dmonoCA_slab_tarj_'       # complex name
 #------------------------------------------------!
 
 
@@ -84,10 +84,12 @@ for i in comfiles:
     if cluster == 'henry':
         subtext='\
 #!/usr/bin/bash\n\
+#BSUB -R "model != L5535"\n\
+#BSUB -R span[ptile=8]\n\
 #BSUB -R "mem>16100"\n\
 #BSUB -q '+queue+'\n\
 #BSUB -n 8\n\
-#BSUB -W 0:15\n\
+#BSUB -W 2:00\n\
 #BSUB -J '+ifile[:-4]+'\n\
 #BSUB -o output\n\
 #BSUB -e error\n\
