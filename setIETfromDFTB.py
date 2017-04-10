@@ -67,7 +67,7 @@ date\n\n'
 
 
 # generate bottom of bind file depending on the complex
-def make_bottomBind(bindmode,stpes,cube):
+def make_bottomBind(bindmode,steps,cube):
     # add cube keyword if needed
     if cube == True:
         cubedyn='\
@@ -285,7 +285,7 @@ def get_excit(confnum):
                 states=list(set(states))
                 confstates[k][0]=int(conf) 
                 confstates[k][1]=states
-                k+=1
+        k=k+1
     return confstates
 
 
@@ -348,4 +348,9 @@ Adsorbate\n\
 
 # RUN PROGRAM
 magic_maker(complex,get_excit(get_confnum(complex)),make_bottomBind(complex,steps,cube),cluster,queue)
+
+#bottomBind=make_bottomBind(complex,steps,cube)
+#confnums=get_confnum(complex)
+#confnums_states=excits=get_excit(confnums)
+#magic_maker(complex,confnums_states,bottomBind,cluster,queue)
 
