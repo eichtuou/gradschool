@@ -349,8 +349,3 @@ Adsorbate\n\
 # RUN PROGRAM
 magic_maker(complex,get_excit(get_confnum(complex)),make_bottomBind(complex,steps,cube),cluster,queue)
 
-#bottomBind=make_bottomBind(complex,steps,cube)
-#confnums=get_confnum(complex)
-#confnums_states=excits=get_excit(confnums)
-#magic_maker(complex,confnums_states,bottomBind,cluster,queue)
-

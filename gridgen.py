@@ -133,15 +133,8 @@ def make_instreams(nx,ny,nz,xpts,ypts,zpts,dx,dy,dz,cords):
         fo.close()
 
 # run program
-def main():
-    print "Reading coordinates from: "+gcartfile
-    xyz=get_xyz(gcartfile)
-    print "Generating coordinates of big cube file..."
-    box=make_box(xyz[0],xyz[1],xyz[2],xpad,ypad,zpad)
-    print "Partitioning big cube file..."
-    boxes=split_box(box[0],box[1],nx,ny,nz)
-    print "Generating input streams for g09 density calculations..."
-    make_instreams(nx,ny,nz,xpts,ypts,zpts,boxes[0],boxes[1],boxes[2],boxes[3])
-    print "Done.\nExiting now..."
+xyz=get_xyz(gcartfile)
+box=make_box(xyz[0],xyz[1],xyz[2],xpad,ypad,zpad)
+boxes=split_box(box[0],box[1],nx,ny,nz)
+make_instreams(nx,ny,nz,xpts,ypts,zpts,boxes[0],boxes[1],boxes[2],boxes[3])
 
-main()

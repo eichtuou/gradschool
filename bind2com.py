@@ -96,10 +96,7 @@ def make_comfile(ifile,atoms,lattice):
 
 
 # run program
-def main():
-    lattice=get_lattice(bindfile,get_index(bindfile))
-    atoms=get_atoms(bindfile,get_index(bindfile),lattice)
-    make_comfile(comfile,atoms,lattice)
+lattice=get_lattice(bindfile,get_index(bindfile))
+atoms=get_atoms(bindfile,get_index(bindfile),lattice)
+make_comfile(comfile,atoms,lattice)
     
-main()
-
