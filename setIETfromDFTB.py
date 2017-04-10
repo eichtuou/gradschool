@@ -1,13 +1,15 @@
 #!/usr/bin/python
 '''
+Run script as: python setIETfromDFTB.py > suball.sh
+
 This script generates IETsim input files from a DFTB conformation scan output.
 It also generates submission scripts for each IETsim calculation, and an input 
 stream file to submit all the jobs at once. 
 '''
 
 #-----------------USER INPUT SECTION-----------------!
-cluster='henry'                 # henry, murgas
-queue='single_chassis'          # name of queue
+cluster='murgas'                # henry, murgas
+queue=''                        # name of queue
 complex='biCA_slab_'            # complex name
 steps='4000.0'                  # simulation steps
 cube=False                      # generate cube file?
@@ -21,7 +23,7 @@ import subprocess
 
 # generate submission scripts
 def gen_subscript(cluster,queue,conf,state):
-    sfile='subdynamics_'+complex+conf
+    sfile='subdynamics_'+conf
     if cluster == 'henry':
         subtext='\
 #!/usr/bin/bash\n\
@@ -315,7 +317,6 @@ def magic_maker(bindmode,confstates,bottomBind,cluster,queue):
             os.chdir(masterpath+'/'+confdir+'/'+statedir)
             # edit bind file
             with open(bindmode+str(confstates[i][0])+'.bind','a') as fo:
-                # bottomBind = 0-cubedyn,1-dynamics,2-occ,3-abspot
                 fo.write(bottomBind[0])
                 fo.write(bottomBind[1])
                 # adsorbate section
@@ -339,6 +340,15 @@ Adsorbate\n\
                 fo.write(bottomBind[3])
             # generate submission script
             gen_subscript(cluster,queue,confdir,statedir)
+            # append output to bash sumbission script
+            # remember to run script as: python setIETfromDFTB.py > suball.sh
+            currdir=os.getcwd()
+            if cluster == 'henry':
+                print 'cd '+currdir
+                print 'bsub < '+'subdynamics_'+confdir 
+            if cluster == 'murgas':
+                print 'cd '+currdir
+                print 'qsub '+'subdynamics_'+confdir 
             # go back to conformation directory
             os.chdir(masterpath+'/'+confdir)
         # go back to master directory
