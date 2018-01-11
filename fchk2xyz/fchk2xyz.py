@@ -7,6 +7,7 @@ import os
 from itertools import product
 from itertools import islice 
 
+
 # check
 if len(sys.argv) == 1:
     print "Error! No fchk file specified."
@@ -49,6 +50,7 @@ def make_xyz(ifile,indx):
     angs=0.529177249
     nucl=[]
     clst=[]
+
     for key in indx:
         if key == 'nuclCh':
             a=indx[key] 
@@ -56,6 +58,7 @@ def make_xyz(ifile,indx):
             b=indx[key] 
         elif key == 'forceF':
             c=indx[key] 
+
     with open(ifile) as lines:
         for line in islice(lines,a,b-1):
             buff=line.strip('\n')
@@ -67,18 +70,21 @@ def make_xyz(ifile,indx):
                     buff[i] = buff[i].replace(key,elem[key])
             for i in range(len(buff)):
                 nucl.append(buff[i])
+
     with open(ifile) as lines:
         for line in islice(lines,b,c-1):
             buff=line.strip('\n')
             buff=buff.split()
             for i in range(len(buff)):
                 clst.append(float(buff[i])*angs)
+
     if len(clst) != 3*len(nucl):
         print 'Error! Number of coordinates doesn\'t match number of atoms.\nTerminating program.' 
         sys.exit()
     ofile=open(ifile[:-5]+'.xyz','w')
     ofile.write(str(len(nucl))+'\n'+ifile+'\n')
     i=0
+
     for j in range(0,len(clst),3):
         clst[j]="{0:.10f}".format(float(clst[j]))
         clst[j+1]="{0:.10f}".format(float(clst[j+1]))
@@ -90,10 +96,11 @@ def make_xyz(ifile,indx):
     return
 
 
-# run program
+# MAIN PROGRAM
 def main():
     make_xyz(fchkf,get_index(fchkf))
 
 
 
+# RUN PROGRAM
 main()

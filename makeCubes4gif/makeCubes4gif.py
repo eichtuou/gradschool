@@ -2,8 +2,10 @@
 This script generates scripts for making cube files later used 
 for creating a gif of the simulation.
 '''
+
 import sys
 import os
+
 
 name='febpycn4s_par_cn_a'
 wavef=name+'_aligned.bind.edyn.wave'
@@ -11,6 +13,7 @@ orbital='L2'
 cube=name+'_'+orbital+'_cube'
 time_fs=4000
 suball=[]
+
 
 # generate cube and submission scripts
 for i in range(0,time_fs+10,10):
@@ -20,6 +23,7 @@ for i in range(0,time_fs+10,10):
         j=i+1
     else:
         j=i
+
     # make cube script
     filename=cube+'_'+str(j)+'.in' 
     buff1='region\n\

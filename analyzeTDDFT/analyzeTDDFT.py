@@ -1,8 +1,10 @@
 '''
 This script gets excitations of interest from a log file of a TD-DFT calculation.
 '''
+
 import sys
 import linecache
+
 
 # check
 if len(sys.argv) == 1:
@@ -19,6 +21,7 @@ if logfile[-4:] != ".log":
 # count number of lines in log file
 numlines=sum(1 for line in open(logfile))
 
+
 # get excitations of interest
 states=[]
 index=[]
@@ -31,6 +34,7 @@ for i in range(1,numlines+1):
         if nm >= 350.0 and fosc >= 0.01:
             states.append(int(line[2].replace(':','')))
             index.append(int(i))
+
 
 # write info to file
 outf=open(logfile[:-4]+'_excitations.dat','w')

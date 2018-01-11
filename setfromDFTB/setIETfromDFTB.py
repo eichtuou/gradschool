@@ -1,4 +1,3 @@
-#!/usr/bin/python
 '''
 Run script as: python setIETfromDFTB.py > suball.sh
 
@@ -353,8 +352,8 @@ Adsorbate\n\
             os.chdir(masterpath+'/'+confdir)
         # go back to master directory
         os.chdir(masterpath)
-    
-         
+
+
 
 # RUN PROGRAM
 magic_maker(complex,get_excit(get_confnum(complex)),make_bottomBind(complex,steps,cube),cluster,queue)

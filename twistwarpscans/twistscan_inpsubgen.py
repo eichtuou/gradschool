@@ -2,8 +2,6 @@
 This script edits input files for a potential energy surface scan and
 generates subission scripts for the calculations.
 '''
-import os
-import shutil as sh 
 
 #------- User input section -----------!
 subs='par'              #substituent
@@ -13,9 +11,13 @@ start=30                #min point
 end=90                  #max point
 #--------------------------------------!
 
+import os
+import shutil as sh 
+
 
 # name of complex  
 comp='fetpy2_'+subs
+
 
 # adjust basis set for each case
 if subs == 'par':
@@ -46,6 +48,7 @@ FE 0\n\
 SDD\n'+basis2[:-6]+'\
 \n\
 \n'
+
 
 # get info, generate new input files and submission scripts 
 for i in range(start,end+1):

@@ -21,6 +21,7 @@ import sys
 import numpy as np
 from itertools import product
 
+
 # check 
 if len(sys.argv) == 1:
     print "Error! No gcart file specified."
@@ -132,7 +133,9 @@ def make_instreams(nx,ny,nz,xpts,ypts,zpts,dx,dy,dz,cords):
             fo.write(buff2)
         fo.close()
 
-# run program
+
+
+# RUN PROGRAM
 xyz=get_xyz(gcartfile)
 box=make_box(xyz[0],xyz[1],xyz[2],xpad,ypad,zpad)
 boxes=split_box(box[0],box[1],nx,ny,nz)

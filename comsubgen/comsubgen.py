@@ -3,12 +3,15 @@ This script generates example input files and submission scripts for a series of
 from a functional benchmarking. It creates directories for each functional and moves the files 
 with the correct permissions to their respective directories.  
 '''
+
 import sys
 import os
 import shutil as sh
 
+
 funcs=["cc-pVDZ","cc-pVTZ","cc-pVQZ","cc-pV5Z","cc-pV6Z","aug-cc-pVDZ","aug-cc-pVTZ",\
        "aug-cc-pVQZ","aug-cc-pV5Z","aug-cc-pV6Z"]
+
 
 # generate com files for diferent functionals
 def gen_comfiles(funcs):
@@ -20,7 +23,7 @@ def gen_comfiles(funcs):
         src=os.getcwd()+'/'+comname
         dst=os.getcwd()+'/'+comname[2:-4]+'/'+comname
         buff="\
-%chk=ne_"+i+".chk\n\
+%chk=h_"+i+".chk\n\
 %mem=4GB\n\
 %nprocs=2\n\
 # p hf/"+i+"\n\
@@ -33,6 +36,7 @@ H      0.000000    0.000000    0.000000\n\
         with open(comname,'w') as fo:
             fo.write(buff)
         sh.move(src,dst) 
+
 
 # generate submision scripts 
 def gen_subs(funcs):
@@ -65,7 +69,8 @@ date\n\
         sh.move(src,dst) 
 
 
-# run program
+
+# RUN PROGRAM
 gen_comfiles(funcs)
 gen_subs(funcs)
 

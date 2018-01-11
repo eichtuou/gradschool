@@ -1,19 +1,18 @@
-#!/usr/bin/python
 '''
 This script generates TD-DFT input files from a DFTB conformation scan output.
 It also generates submission scripts for each TD-DFT calculation, and an input 
 stream file to submit all the jobs at once. 
-
 '''
-import sys
-import os
-import shutil as sh
 
 #---------------USER INPUT SECTION---------------!
 cluster='henry'                   # henry, murgas
 queue='single_chassis'            # name of queue
 prefix='dmonoCA_slab_tarj_'       # complex name
 #------------------------------------------------!
+
+import sys
+import os
+import shutil as sh
 
 
 # basis set 
@@ -38,10 +37,12 @@ allfiles=os.listdir(os.getcwd())
 comfiles=[]
 suball=[] 
 
+
 # get names of input files
 for file in allfiles:
     if prefix in file:
         comfiles.append(file)
+
 
 # edit input files
 for i in comfiles:
@@ -127,6 +128,7 @@ date\n\n'
     with open(sfile,'w') as fo:
         fo.write(subtext)
     os.chmod('./'+sfile,0755)
+
 
 # generate input stream for bash script
 with open('suball.sh','w') as fo:

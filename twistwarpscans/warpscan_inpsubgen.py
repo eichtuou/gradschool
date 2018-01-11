@@ -2,8 +2,6 @@
 This script edits input files for a potential energy surface scan and
 generates subission scripts for the calculations.
 '''
-import os
-import shutil as sh 
 
 #------- User input section -----------!
 subs='i'                #substituent
@@ -11,9 +9,13 @@ queue='cos'             #name of queue
 time='96:00'            #computing time
 #--------------------------------------!
 
+import os
+import shutil as sh 
+
 
 # name of complex  
 comp='fetpy2_'+subs
+
 
 # adjust basis set for each case
 if subs == 'par':
