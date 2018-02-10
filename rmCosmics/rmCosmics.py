@@ -6,7 +6,7 @@ averaged corrected spectrum.
 Spectra to be corrected should be located in a single directory.
 
 To baseline correct the spectra, the baseline correction points 
-must be provided in the variable "bline". 
+must be provided in the "USER INPUT" section. 
 
 Run as: python rmCosmics.py
 '''
@@ -86,7 +86,7 @@ def makeSpecs(sfiles,data):
 			for i in range(1,len(data)+1):
 				buff=str(i)+','+(str(data[i-1][sfiles.index(sfile)]))
 				fo.write(buff+'\n')
-	# average corrected spectrum
+	# averaged corrected spectrum
 	avgspec='avg_spec.txt' 
 	with open(avgspec,'w') as fo:
 		for i in range(1,len(data)+1):
