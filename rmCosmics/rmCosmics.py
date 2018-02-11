@@ -1,12 +1,17 @@
 '''
 This script baseline corrects and removes cosmic rays from various 
 raman spectra files of the same sample, and it also generates an 
-averaged corrected spectrum. 
+averaged corrected spectrum. All spectra files are also corrected
+with the toluene reference spectrum. 
 
 Spectra to be corrected should be located in a single directory.
 
 To baseline correct the spectra, the baseline correction points 
-must be provided in the "USER INPUT" section. 
+must be provided in the "USER INPUT" section.
+
+To correct the spectra with the toluene reference specturm, the
+pixel numbers of the five reference peaks must be provided in the
+"USER INPUT" section.
 
 Run as: python rmCosmics.py
 '''
@@ -14,6 +19,8 @@ Run as: python rmCosmics.py
 #--------------------- USER INPUT ---------------------#
 # baseline correction points
 bcpts=[88,228,393,487,745,1012,1120,1265]
+# pixel numbers of toluene reference peaks 
+tolpix=[158,192,422,643,942]
 #------------------------------------------------------#
 
 import os
@@ -77,20 +84,34 @@ def delCosmics(sfiles,data):
 	return data
 
 
+# get correction for toluene spectrum
+def getCor4tol(tpix):
+	x=np.array(tpix)
+	y=np.array([1003.1,1030.1,1210.0,1378.6,1604.1])
+	a=np.vstack([x,np.ones(len(x))]).T
+	m,c=np.linalg.lstsq(a,y,rcond=None)[0]
+	return m,c
+
 # write new files
-def makeSpecs(sfiles,data):
+def makeSpecs(sfiles,data,tcor):
+	# convert pixels into wavenumbers
+	pix=[x for x in range(1,len(data)+1)]
+	xw=tcor[0]
+	yi=tcor[1]
+	for i in range(1,len(data)+1):
+		pix[i-1]=pix[i-1]*xw+yi
 	# corrected spectra files
 	for sfile in sfiles:
 		nwspec=sfile[:-4]+'_cor.txt'
 		with open(nwspec,'w') as fo:
-			for i in range(1,len(data)+1):
-				buff=str(i)+','+(str(data[i-1][sfiles.index(sfile)]))
+			for i in range(0,len(pix)):
+				buff=str(pix[i])+','+(str(data[i][sfiles.index(sfile)]))
 				fo.write(buff+'\n')
 	# averaged corrected spectrum
 	avgspec='avg_spec.txt' 
 	with open(avgspec,'w') as fo:
-		for i in range(1,len(data)+1):
-			buff=str(i)+','+(str(data[i-1][-1]))
+		for i in range(0,len(pix)):
+			buff=str(pix[i])+','+(str(data[i][-1]))
 			fo.write(buff+'\n')
 
 
@@ -101,7 +122,7 @@ def main(zpts):
 	pixdat=getPix(specs)
 	data=getData(specs,pixdat[0],pixdat[1])
 	cordat=delCosmics(specs,blcor(specs,zpts,data))
-	makeSpecs(specs,cordat)
+	makeSpecs(specs,cordat,getCor4tol(tolpix))
 
 
 
