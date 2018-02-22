@@ -1,4 +1,7 @@
 '''
+Author: Jessica M. Gonzalez-Delgado
+		North Carolina State University
+
 This script baseline corrects and removes cosmic rays from various 
 raman spectra files of the same sample, and it also generates an 
 averaged corrected spectrum. All spectra files are also corrected
@@ -9,7 +12,7 @@ Spectra to be corrected should be located in a single directory.
 To baseline correct the spectra, the baseline correction points 
 must be provided in the "USER INPUT" section.
 
-To correct the spectra with the toluene reference specturm, the
+To correct the spectra with the toluene reference spectrum, the
 pixel numbers of the five reference peaks must be provided in the
 "USER INPUT" section.
 
@@ -18,9 +21,9 @@ Run as: python rmCosmics.py
 
 #--------------------- USER INPUT ---------------------#
 # baseline correction points
-bcpts=[88,228,393,487,745,1012,1120,1265]
+bcpts=[]
 # pixel numbers of toluene reference peaks 
-tolpix=[158,192,422,643,942]
+tolpix=[]
 #------------------------------------------------------#
 
 import os
@@ -72,6 +75,14 @@ def blcor(sfiles,zpts,data):
 	return data
 
 
+#create copies of baseline corrected spectra files
+def mkcp(sfiles,data):
+	for i in range(0,len(sfiles)):
+		with open(sfiles[i][:-4]+'.dat','w') as fo:
+			for j in range(0,len(data)):
+				buff=str(j+1)+'    '+str(data[j][i])
+				fo.write(buff+'\n')
+
 # remove cosmic rays 
 def delCosmics(sfiles,data):
 	for i in range(0,len(data)):
@@ -79,7 +90,7 @@ def delCosmics(sfiles,data):
 		stdp=np.std(data[i,:-1])
 		data[i][-1]=avg
 		for j in range(0,len(sfiles)):
-			if data[i][j] >= avg+1*stdp:
+			if data[i][j] >= avg+stdp:
 				data[i][j]=avg
 	return data
 
@@ -105,13 +116,13 @@ def makeSpecs(sfiles,data,tcor):
 		nwspec=sfile[:-4]+'_cor.txt'
 		with open(nwspec,'w') as fo:
 			for i in range(0,len(pix)):
-				buff=str(pix[i])+','+(str(data[i][sfiles.index(sfile)]))
+				buff=str(pix[i])+'    '+(str(data[i][sfiles.index(sfile)]))
 				fo.write(buff+'\n')
 	# averaged corrected spectrum
-	avgspec='avg_spec.txt' 
+	avgspec='avg_cor.txt' 
 	with open(avgspec,'w') as fo:
 		for i in range(0,len(pix)):
-			buff=str(pix[i])+','+(str(data[i][-1]))
+			buff=str(pix[i])+'    '+(str(data[i][-1]))
 			fo.write(buff+'\n')
 
 
@@ -121,6 +132,7 @@ def main(zpts):
 	specs=getSpecs(dirfiles)
 	pixdat=getPix(specs)
 	data=getData(specs,pixdat[0],pixdat[1])
+	mkcp(specs,blcor(specs,zpts,data))
 	cordat=delCosmics(specs,blcor(specs,zpts,data))
 	makeSpecs(specs,cordat,getCor4tol(tolpix))
 
