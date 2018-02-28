@@ -1,9 +1,14 @@
 '''
+Author: Jessica M. Gonzalez-Delgado
+		North Carolina State University
+
 This script edits input files for a potential energy surface scan and
 generates subission scripts for the calculations.
+
+Run as: python twistscan_inpsubgen.py
 '''
 
-#------- User input section -----------!
+#------- USER INPUT SECTION -----------!
 subs='par'              #substituent
 queue='single_chassis'  #name of queue
 time='96:00'            #computing time

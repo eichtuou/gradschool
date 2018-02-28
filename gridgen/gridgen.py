@@ -1,11 +1,16 @@
 '''
+Author: Jessica M. Gonzalez-Delgado
+		North Carolina State University
+
 This script reads a gcart file and creates a box around the system
 with a user specified padding in units of angstroms. The box is then
 partitioned in smaller boxes, which are then utilized to perform
 denstity calculations in parallel for the whole system.
+
+Run as: python gridgen.py
 '''
 
-#-------------------- user input section --------------------!
+#-------------------- USER INPUT SECTION --------------------!
 xpad=3.0             # padding in x direction [angs]
 ypad=3.0             # padding in y direction [angs]
 zpad=3.0             # padding in z direction [angs]

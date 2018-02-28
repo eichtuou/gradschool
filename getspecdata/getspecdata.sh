@@ -1,10 +1,16 @@
 #!/bin/bash
-
+# 
+# Author: Jessica M. Gonzalez-Delgado
+#		  North Carolina State University
+#
 # This script collects spectral data from a series of different TD-DFT calculations performed to benchmark
 # functionals. The data files generated from this script are then used in a GNU plot script to create the 
 # images. The script calls a pearl script that fetches the excitations and stores them in a *_sticks.dat file. 
 # The script then calls another pearl script that reads the *_sticks.dat file and creates and stores spectral
 # information in a *_spec.dat file.
+#
+# Run as: ./getspecdata.sh
+#
  
 # parent directory
 parent=/Volumes/CALC/henry/functionalBenchmarking

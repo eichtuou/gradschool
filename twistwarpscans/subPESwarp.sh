@@ -1,7 +1,14 @@
 #!/bin/bash
+# 
+# Author: Jessica M. Gonzalez-Delgado
+#		  North Carolina State University
+#
 # This script renames multiple input files. Then calls a python script that grabs the
 # coordinates from these files, edits them, and generates submission scripts for each.
 # Finally the script submits the calculations.
+#
+# Run as: ./subPESwarp.sh
+#
 
 # name of complex 
 comp='i'

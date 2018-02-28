@@ -1,7 +1,14 @@
 #!/bin/bash
+#
+# Author: Jessica M. Gonzalez-Delgado
+#		  North Carolina State University
+#
 # This script sets up cube files to be read by a pymol script that 
 # generates png files of the orbitals of a molecule, then organizes 
 # the png files in directories by isovalues of the surfaces.
+#
+# Run as: ./mkorbs.sh
+#
 
 # molecule name
 cname="febpycn4s_monoCA_mo"

@@ -1,9 +1,15 @@
-#!/usr/bin/bash
-
+#!/bin/bash
+#
+# Author: Jessica M. Gonzalez-Delgado
+#		  North Carolina State University
+#
 # This script grabs the electronic energy of a series of calculations
 # performed for a potential energy surface scan on different halogentated 
 # Fe(tpy)2 complexes. It will only output the information if and only if
 # the calculation converged.
+#
+# Run as: bash getSCF.sh
+#
 
 # working directory
 wdir=`pwd`

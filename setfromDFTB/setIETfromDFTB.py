@@ -1,9 +1,12 @@
 '''
-Run script as: python setIETfromDFTB.py > suball.sh
+Author: Jessica M. Gonzalez-Delgado
+		North Carolina State University
 
 This script generates IETsim input files from a DFTB conformation scan output.
 It also generates submission scripts for each IETsim calculation, and an input 
 stream file to submit all the jobs at once. 
+
+Run as: python setIETfromDFTB.py > suball.sh
 '''
 
 #-----------------USER INPUT SECTION-----------------!

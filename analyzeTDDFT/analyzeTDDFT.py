@@ -1,5 +1,10 @@
 '''
+Author: Jessica M. Gonzalez-Delgado
+		North Carolina State University
+
 This script gets excitations of interest from a log file of a TD-DFT calculation.
+
+Run as: python analyzeTDDFT.py file.log
 '''
 
 import sys

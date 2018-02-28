@@ -1,7 +1,12 @@
 '''
+Author: Jessica M. Gonzalez-Delgado
+		North Carolina State University
+
 This script generates TD-DFT input files from a DFTB conformation scan output.
 It also generates submission scripts for each TD-DFT calculation, and an input 
 stream file to submit all the jobs at once. 
+
+Run as: python setTDDFTfromDFTB.py
 '''
 
 #---------------USER INPUT SECTION---------------!
@@ -121,6 +126,7 @@ cd $RUNDIR\n\
 \n\
 date\n\
 g09 '+ifile+'\n\
+
 date\n\n'
         subcmd='qsub '+sfile
         suball.append(subcmd)

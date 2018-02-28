@@ -1,5 +1,10 @@
 '''
+Author: Jessica M. Gonzalez-Delgado
+		North Carolina State University
+
 This script generates an xyz file from a fchk file.
+
+Run as: python fchk2xyz.py file.fchk
 '''
 
 import sys
@@ -104,3 +109,4 @@ def main():
 
 # RUN PROGRAM
 main()
+
