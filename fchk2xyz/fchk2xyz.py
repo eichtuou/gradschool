@@ -1,8 +1,12 @@
+#/usr/bin/python
 '''
 Author: Jessica M. Gonzalez-Delgado
 	North Carolina State University
 
-This script generates an xyz file from a fchk file.
+This script translates an FCHK file to an XYZ file. Both filetypes
+contain molecular structure information. FCHK is specific from
+Gaussian09 while XYZ is widely used and can be read by various
+molecular modeling softwares.  
 
 Run as: python fchk2xyz.py file.fchk
 '''
@@ -12,8 +16,23 @@ import os
 from itertools import product
 from itertools import islice 
 
-# need to add check
-fchkf=sys.argv[1]
+
+# check input file
+def check():
+    if len(sys.argv) == 0:
+        print "Error! No FCHK file specified."
+        print "Exiting now..."
+        sys.exit()
+
+    if sys.argv[1][-4:] != "FCHK": 
+        print "Error! File is not FCHK format."
+        print "Exiting now..."
+        sys.exit()
+
+    fchkfile = sys.argv[1]
+
+    return fchkfile
+
 
 # get indeces of lines of interest on fchk file
 def get_index(ifile):
@@ -92,7 +111,9 @@ def make_xyz(ifile,indx):
 
 # MAIN PROGRAM
 def main():
+    fchk=check()
     make_xyz(fchkf,get_index(fchkf))
+
 
 
 # RUN PROGRAM
