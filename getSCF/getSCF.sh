@@ -8,15 +8,15 @@
 # Fe(tpy)2 complexes. It will only output the information if and only if
 # the calculation converged.
 #
-# Run as: bash getSCF.sh
-#
+# Run as: bash getSCF.sh > scf.dat
+
 
 # working directory
 wdir=`pwd`
-cd $wdir
 
 # molecule
 mol='fetpy2q_'
+
 # substituents
 declare -a subs=("par" "f" "cl" "br" "i")
 
@@ -27,13 +27,14 @@ declare -a pts=("150" "152p5" "155" "157p5" "160" "162p5" "165"\
 # navigate through directories
 for i in "${subs[@]}"
 do
-    cd $wdir
-    cd ${mol:0:6}_$i
-    printf "\n"
+    if [ $i != "par" ]; then
+        printf "\n"
+    fi
     echo $i
     # get electronic energy only if calculation converged
     for j in "${pts[@]}"
     do
+        cd $wdir/"$mol""$i"/$j
         converged=`grep 'Stationary point found' "$mol""$i"_"$j"".log"`
         if [ ${#converged} -ne "0" ]; then
             printf "$j"

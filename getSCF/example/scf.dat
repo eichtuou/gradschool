@@ -1,0 +1,74 @@
+par
+150 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+152p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+155 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+157p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+160 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+162p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+165 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+167p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+170 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+172p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+175 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+177p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+180 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+
+f
+150 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+152p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+155 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+157p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+160 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+162p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+165 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+167p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+170 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+172p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+175 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+177p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+180 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+
+cl
+150 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+152p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+155 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+157p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+160 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+162p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+165 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+167p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+170 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+172p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+175 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+177p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+180 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+
+br
+150 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+152p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+155 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+157p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+160 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+162p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+165 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+167p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+170 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+172p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+175 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+177p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+180 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+
+i
+150 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+152p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+155 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+157p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+160 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+162p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+165 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+167p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+170 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+172p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+175 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+177p5 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
+180 SCF Done:  E(RB3LYP) =  -76.4339762208     A.U. after    1 cycles
