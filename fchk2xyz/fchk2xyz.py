@@ -1,6 +1,6 @@
 '''
 Author: Jessica M. Gonzalez-Delgado
-		North Carolina State University
+	North Carolina State University
 
 This script generates an xyz file from a fchk file.
 
@@ -12,18 +12,8 @@ import os
 from itertools import product
 from itertools import islice 
 
-
-# check
-if len(sys.argv) == 1:
-    print "Error! No fchk file specified."
-    print "Exiting now..."
-    sys.exit()
-fchkf=str(sys.argv[1])
-if fchkf[-5:] != ".fchk": 
-    print "Error! File is not fchk format."
-    print "Exiting now..."
-    sys.exit()
-
+# need to add check
+fchkf=sys.argv[1]
 
 # get indeces of lines of interest on fchk file
 def get_index(ifile):
@@ -98,13 +88,11 @@ def make_xyz(ifile,indx):
         ofile.write(buff)
         i+=1
     ofile.close()
-    return
 
 
 # MAIN PROGRAM
 def main():
     make_xyz(fchkf,get_index(fchkf))
-
 
 
 # RUN PROGRAM
