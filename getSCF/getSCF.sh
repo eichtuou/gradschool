@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Author: Jessica M. Gonzalez-Delgado
-#		  North Carolina State University
+#	  North Carolina State University
 #
 # This script grabs the electronic energy of a series of calculations
 # performed for a potential energy surface scan on different halogentated 
