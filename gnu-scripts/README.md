@@ -11,5 +11,5 @@ well, so you can do mathematical operations on a whole column - although I
 never did anything extreme. 
 
 I think it's a cool open source software and you can find more about it here:
-https://www.gnuplot.info/
+http://www.gnuplot.info/
 
