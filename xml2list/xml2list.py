@@ -1,4 +1,3 @@
-#!/usr/bin/python
 '''
 Author: Jessica M. Gonzalez-Delgado
         North Carolina State University
@@ -9,6 +8,7 @@ to a peak list file to be read by NMRFAM-Sparky [LIST].
 Run as: python xml2list.py file.xml
 '''
 
+#!/usr/bin/python
 import sys
 
 
