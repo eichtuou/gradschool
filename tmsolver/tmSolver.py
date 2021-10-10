@@ -29,6 +29,7 @@ Here are the spectral density functions solved for tm using J(0):
         [ J*ts^2*tf^2 ]
 
 '''
+
 #!/usr/bin/python
 import numpy as np
 import sys
