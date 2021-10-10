@@ -1,4 +1,3 @@
-#!/usr/bin/python
 '''
 Author: Jessica M. Gonzalez-Delgado
 	North Carolina State University
@@ -11,6 +10,7 @@ molecular modeling softwares.
 Run as: python fchk2xyz.py file.fchk
 '''
 
+#!/usr/bin/python
 import sys
 import os
 from itertools import product
