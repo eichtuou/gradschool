@@ -8,6 +8,7 @@ to a peak list file to be read by TopSpin [PEAKS].
 Run as: python list2peaks.py file.list
 '''
 
+#!/usr/bin/python
 import sys
 
 
