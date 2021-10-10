@@ -1,4 +1,3 @@
-#!/usr/bin/python
 '''
 Author: Jessica M. Gonzalez-Delgado
 	North Carolina State University
@@ -12,6 +11,12 @@ system in Gaussian09.
 Run as: python gridgen.py file.xyz
 '''
 
+#!/usr/bin/python
+import sys
+import numpy as np
+from itertools import product
+
+
 #-------------------- USER INPUT SECTION --------------------!
 xpad=2.0             # padding in x direction [angs]
 ypad=2.0             # padding in y direction [angs]
@@ -23,10 +28,6 @@ xpts=175             # points in x direction (resolution)
 ypts=175             # points in y direction (resolution) 
 zpts=175             # points in z direction (resolution) 
 #------------------------------------------------------------!
-
-import sys
-import numpy as np
-from itertools import product
 
 
 # check 
