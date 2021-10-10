@@ -1,3 +1,4 @@
+#!/usr/bin/python
 '''
 Author: Jessica M. Gonzalez-Delgado
 		North Carolina State University
@@ -11,25 +12,29 @@ Run as: python makeCubes4gif.py
 import sys
 import os
 
-name='febpycn4s_par_cn_a'
-wavef=name+'_aligned.bind.edyn.wave'
-orbital='L2'
-cube=name+'_'+orbital+'_cube'
-time_fs=4000
-suball=[]
+
+#--------------------- USER INPUT ---------------------#
+name = 'febpycn4s_par_cn_a'
+wavef = name+'_aligned.bind.edyn.wave'
+orbital = 'L2'
+cube = name+'_'+orbital+'_cube'
+#time_fs = 4000
+time_fs = 100
+suball = []
+#------------------------------------------------------#
 
 # generate cube and submission scripts
 for i in range(0,time_fs+10,10):
     if i == 1:
         continue
     if i == 0:
-        j=i+1
+        j = i+1
     else:
-        j=i
+        j = i
 
     # make cube script
-    filename=cube+'_'+str(j)+'.in' 
-    buff1='region\n\
+    filename = cube+'_'+str(j)+'.in' 
+    buff1 = 'region\n\
 0.25\n\
 0.0000  15.24749188\n\
 0.0000  10.48704607\n\
@@ -38,15 +43,15 @@ for i in range(0,time_fs+10,10):
 name\n'+filename[:-3]+'\n\
 \n\
 make\n1\n'
-    fo=open(filename,'w')
+    fo = open(filename,'w')
     fo.write(buff1)
     fo.write(str(j))
     fo.close()
     os.chmod('./'+filename,0755)
     
     # make submission script 
-    sfilename='subcube_'+filename[:-3]
-    buff2='\
+    sfilename = 'subcube_'+filename[:-3]
+    buff2 = '\
 #!/usr/bin/bash\n\
 #BSUB -R span[ptile=8]\n\
 #BSUB -R "model != L5535"\n\
@@ -64,13 +69,13 @@ echo hosts = $LSB_HOSTS\n\
 date\n\
 cubebuilder '+filename+' '+wavef+'\n\
 date\n\n'
-    fo=open(sfilename,'w')
+    fo = open(sfilename,'w')
     fo.write(buff2)
     fo.close()
     os.chmod('./'+sfilename,0755)
 
     # for submitting all jobs at once
-    subcmd='bsub < '+sfilename
+    subcmd = 'bsub < '+sfilename
     suball.append(subcmd)
 
 # generate input stream for bash script
@@ -78,5 +83,6 @@ with open('suball.sh','w') as fo:
     for i in range(0,len(suball)):
         fo.write(suball[i])
         fo.write('\n')
-os.chmod('./suball.sh',0755)
+# commented this out because we are not submitting the jobs
+#os.chmod('./suball.sh',0755)
 
