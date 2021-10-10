@@ -1,4 +1,3 @@
-#!/usr/bin/python
 '''
 Author: Jessica M. Gonzalez-Delgado
 		North Carolina State University
@@ -9,6 +8,7 @@ for creating a gif of the simulation.
 Run as: python makeCubes4gif.py 
 '''
 
+#!/usr/bin/python
 import sys
 import os
 
@@ -22,6 +22,7 @@ cube = name+'_'+orbital+'_cube'
 time_fs = 100
 suball = []
 #------------------------------------------------------#
+
 
 # generate cube and submission scripts
 for i in range(0,time_fs+10,10):
