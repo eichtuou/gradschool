@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+
 # Author: Jessica M. Gonzalez-Delgado
 #	  North Carolina State University
 #
