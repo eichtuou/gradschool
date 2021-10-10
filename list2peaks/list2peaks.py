@@ -59,7 +59,7 @@ def makepeaksfile(lfile,peaks):
 
 # MAIN PROGRAM
 def main():
-    infile=check()
+    infile = check()
     makepeaksfile(infile,getpeakinfo(infile))
 
 
