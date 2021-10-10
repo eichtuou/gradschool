@@ -18,15 +18,15 @@ from itertools import product
 
 
 #-------------------- USER INPUT SECTION --------------------!
-xpad=2.0             # padding in x direction [angs]
-ypad=2.0             # padding in y direction [angs]
-zpad=2.0             # padding in z direction [angs]
-nx=4                 # has to be n+1, n = cubes in x direction
-ny=4                 # has to be n+1, n = cubes in y direction
-nz=4                 # has to be n+1, n = cubes in z direction
-xpts=175             # points in x direction (resolution) 
-ypts=175             # points in y direction (resolution) 
-zpts=175             # points in z direction (resolution) 
+xpad = 2.0             # padding in x direction [angs]
+ypad = 2.0             # padding in y direction [angs]
+zpad = 2.0             # padding in z direction [angs]
+nx = 4                 # has to be n+1, n = cubes in x direction
+ny = 4                 # has to be n+1, n = cubes in y direction
+nz = 4                 # has to be n+1, n = cubes in z direction
+xpts = 175             # points in x direction (resolution) 
+ypts = 175             # points in y direction (resolution) 
+zpts = 175             # points in z direction (resolution) 
 #------------------------------------------------------------!
 
 
