@@ -104,7 +104,6 @@ def makeAvg(data):
     # average y-values
     for i in range(0,len(data)):
         avg = np.mean(data[i,1:-1])
-        stdp = np.std(data[i,1:-1])
         data[i][-1] = avg
     # write averaged spectrum file
     outfile='avg-sp-spec.dat' 
