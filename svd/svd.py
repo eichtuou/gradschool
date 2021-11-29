@@ -18,7 +18,7 @@ This script performs SVD analysis on a CSV data file of the following format:
     corrected.
 
 The scripts outputs a CSV file containing the VT matrix components labeled as:
-    data-vt.csv 
+    0-data-vt.csv 
 
 run as: python svd.py data.csv
 
@@ -76,7 +76,7 @@ def doSVD(dfile,darr):
     u,s,vt = np.linalg.svd(darr)
     
     # save VT components in a CSV file
-    ofile = dfile[:-4]+"-vt.csv"
+    ofile = "0-"+dfile[:-4]+"-vt.csv"
     fo = open(ofile, 'w')
     for i in range(0,len(vt)):
         buff = "VT component #"+str(i+1)+" " 
