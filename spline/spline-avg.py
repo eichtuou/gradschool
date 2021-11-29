@@ -106,7 +106,7 @@ def makeAvg(data):
         avg = np.mean(data[i,1:-1])
         data[i][-1] = avg
     # write averaged spectrum file
-    outfile='avg-sp-spec.dat' 
+    outfile='0-avg-sp-spec.dat' 
     with open(outfile,'w') as fo:
         for i in range(0,len(data)):
             buff = str(data[i][0])+'    '+(str(data[i][-1]))
