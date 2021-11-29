@@ -120,7 +120,7 @@ def makeSpecs(sfiles,data,tcor):
                 buff=str(pix[i])+'    '+(str(data[i][sfiles.index(sfile)]))
                 fo.write(buff+'\n')
     # averaged corrected spectrum
-    avgspec='avg-bc-rmc-spec.dat' 
+    avgspec='0-avg-bc-rmc-spec.dat' 
     with open(avgspec,'w') as fo:
         for i in range(0,len(pix)):
             buff=str(pix[i])+'    '+(str(data[i][-1]))
