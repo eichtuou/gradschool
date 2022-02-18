@@ -87,20 +87,20 @@ def get_atoms(ifile, flags, abc):
 
 # make com file
 def make_comfile(ifile, atoms, lattice):
-    header = "# hf/sto-3g\n\n" + ifile[:-5] + "\n\n0 1\n"
+    header = "# hf/sto-3g\n\n"+ifile[:-5]+"\n\n0 1\n"
     zeros = '0.000000000'
-    comfile = open(ifile[:-4] + "com", 'w')
+    comfile = open(ifile[:-4]+"com", 'w')
     comfile.write(header)
     for i in range(0, len(atoms)):
         comfile.write(atoms[i])
         comfile.write('\n')
     for i in range(0, len(lattice)):
         if i == 0:
-            buff = 'Tv ' + str(lattice[i]) + ' ' + zeros + ' ' + zeros
+            buff = 'Tv '+str(lattice[i])+' '+zeros+' '+zeros
         elif i == 1:
-            buff = 'Tv ' + zeros + ' ' + str(lattice[i]) + ' ' + zeros
+            buff = 'Tv '+zeros+' '+str(lattice[i])+' '+zeros
         elif i == 2:
-            buff = 'Tv ' + zeros + ' ' + zeros + ' ' + str(lattice[i])
+            buff = 'Tv '+zeros+' '+zeros+' '+str(lattice[i])
         comfile.write(buff)
         comfile.write('\n')
     comfile.close()
