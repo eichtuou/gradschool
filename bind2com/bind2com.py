@@ -1,16 +1,14 @@
-'''
+"""
 Author: Jessica M. Gonzalez-Delgado
     North Carolina State University
 
 This script converts a bind file into a com file.
 
 Run as: python bind2com.py
-'''
+"""
 
 import sys
 from itertools import islice
-
-argvs = sys.argv
 
 
 # check
@@ -117,4 +115,5 @@ def main(argvs):
 
 
 # RUN PROGRAM
+argvs = sys.argv
 main(argvs)
