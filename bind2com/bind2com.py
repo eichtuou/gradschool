@@ -1,6 +1,6 @@
 """
 Author: Jessica M. Gonzalez-Delgado
-        North Carolina State University
+    North Carolina State University
 
 This script converts a bind file into a com file.
 
