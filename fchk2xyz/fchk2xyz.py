@@ -10,7 +10,6 @@ molecular modeling softwares.
 Run as: python fchk2xyz.py file.fchk
 '''
 
-#!/usr/bin/python
 import sys
 import os
 from itertools import product
