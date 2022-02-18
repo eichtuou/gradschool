@@ -24,7 +24,6 @@ run as: python svd.py data.csv
 
 '''
 
-#!/usr/bin/python
 import sys
 import numpy as np
 
