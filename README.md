@@ -22,6 +22,8 @@ lost all my files from my M.S. so I provided some dummy calculation files on the
 molecule just to show you the capabilities of my scripts. All the scripts I developed
 during my Ph.D. are based on the DHP system and provide real data examples.
 
+Every script has a description inside that explains what the code does and how to run it. 
+
 Thanks for reading all that! And if somehow you find these useful and use them in your
 publications/reserach please credit me as: Jessica M. González-Delgado 
 
