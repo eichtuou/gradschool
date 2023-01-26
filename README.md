@@ -17,15 +17,18 @@ organizing data files. On my fourth year I started working on some molecular dyn
 (MD) simulations and molecular docking calculations on dehaloperoxidase-hemoglobin (DHP)
 protein. For these I used NAMD, CHARMM, and AutoDock Vina. 
 
-Now (mid 2021) on my on my fifth and last Ph.D. year I decided to organize my GitHub. I
-lost all my files from my M.S. so I provided some dummy calculation files on the water
-molecule just to show you the capabilities of my scripts. All the scripts I developed
-during my Ph.D. are based on the DHP system and provide real data examples.
+On my last Ph.D. year I decided to brush up my GitHub. I lost all my files from my M.S. 
+so I provided some dummy calculation files on the water molecule to demonstrate the 
+capabilities of my scripts. All the scripts I developed during my Ph.D. are based on the 
+DHP system and provide real data examples. All scripts are documented and have docstrings 
+that explain what each script does and how to run it. 
 
-Every script has a description inside that explains what the code does and how to run it. 
+I am currently (2023) working on improving all the scripts and updating them to python3.11+
 
 Thanks for reading all that! And if somehow you find these useful and use them in your
-publications/reserach please credit me as: Jessica M. González-Delgado 
+publications/reserach you can acknowledge me as: 
+    "...thanks to Jessica M. González-Delgado from the Department of Chemistry at North 
+    Carolina State University for her open-source code libraries..."
 
 -eichtuou
 
