@@ -25,10 +25,5 @@ that explain what each script does and how to run it.
 
 I am currently (2023) working on improving all the scripts and updating them to python3.11+
 
-Thanks for reading all that! And if somehow you find these useful and use them in your
-publications/reserach you can acknowledge me as: 
-    "...thanks to Jessica M. González-Delgado from the Department of Chemistry at North 
-    Carolina State University for her open-source code libraries..."
-
 -eichtuou
 
