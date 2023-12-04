@@ -37,7 +37,7 @@ def read_log_file(logfile, nm_min=50, nm_max=150, f_osc_min=0.01):
 
 
 def get_orbitals(line, occ, virt, coeff, contr):
-    "Get orbital contributions to excited state."
+    """Get orbital contributions to excited state."""
     elements = line.split()
     contr_value = 2 * float(elements[3]) ** 2
     occ.append(int(elements[0]))
