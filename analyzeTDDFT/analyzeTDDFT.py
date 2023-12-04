@@ -1,84 +1,104 @@
-'''
-Author: Jessica M. Gonzalez-Delgado
-		North Carolina State University
-
-This script gets excitations of interest from a log file of a TD-DFT calculation.
+"""This script gets excitations of interest from a log file of a TD-DFT
+calculation from Gaussian09.
 
 Run as: python analyzeTDDFT.py file.log
-'''
+"""
 
 import sys
+import argparse
 import linecache
 
 
-# check
-if len(sys.argv) == 1:
-    print "Error! No log file specified."
-    print "Exiting now..."
-    sys.exit()
-logfile=str(sys.argv[1])
-if logfile[-4:] != ".log": 
-    print "Error! File is not log format."
-    print "Exiting now..."
-    sys.exit()
+def get_states(line, line_number, nm_init, nm_final, f_osc_min, states, index):
+    """Get excited states with specific oscillator strength."""
+    line = line.split()
+    nm = float(line[6])
+    f_osc = float(line[8].replace('f=', ''))
+
+    if nm >= nm_init and nm <= nm_final and f_osc >= f_osc_min:
+        states.append(int(line[2].replace(':', '')))
+        index.append(line_number)
+
+    return None
 
 
-# count number of lines in log file
-numlines=sum(1 for line in open(logfile))
+def read_log_file(logfile, nm_min=50, nm_max=150, f_osc_min=0.01):
+    """Read log file and identify lines with excitation information."""
+    states = []
+    index = []
+
+    with open(logfile, 'r') as file:
+        for i, line in enumerate(file, 1):
+            line = line.strip()
+            if 'Excited State' in line:
+                get_states(line, i, nm_min, nm_max, f_osc_min, states, index)
+
+    return states, index
 
 
-# get excitations of interest
-states=[]
-index=[]
-for i in range(1,numlines+1):
-    line=linecache.getline(logfile,i).strip()
-    if 'Excited State' in line:
-        line=line.split()
-        nm=float(line[6])
-        fosc=float(line[8].replace('f=',''))
-        if nm >= 350.0 and fosc >= 0.01:
-            states.append(int(line[2].replace(':','')))
-            index.append(int(i))
+def get_orbitals(line, occ, virt, coeff, contr):
+    "Get orbital contributions to excited state."
+    elements = line.split()
+    contr_value = 2 * float(elements[3]) ** 2
+    occ.append(int(elements[0]))
+    virt.append(int(elements[2]))
+    coeff.append(elements[3])
+    contr.append(f"{contr_value:.2f}")
+
+    return None
 
 
-# write info to file
-outf=open(logfile[:-4]+'_excitations.dat','w')
-for i in index:
-    line=linecache.getline(logfile,i).strip()
-    line=line.split()
-    buff=str(line[0])+' '+str(line[1])+' '+str(line[2])+'   '+str(line[6])+' '+str(line[7])+'   '+str(line[8])+'\n'
-    outf.write(buff)
-    occ=[]      # occupied orbitals
-    virt=[]     # virtual orbitals
-    coeff=[]    # coeffient
-    contr=[]    # contribution
+def write_output_file(logfile, index):
+    """Write output file with excited states and orbital contributions."""
+    with open(logfile[:-4] + '_excitations.dat', 'w') as outf:
+        for i in index:
+            line = linecache.getline(logfile, i).strip()
+            line = line.split()
 
-    # get orbital contributions from each excited state
-    for j in range(1,100):
-        k=i
-        k+=j
-        buff=linecache.getline(logfile,k).strip()
-        # log file has excitations as: occ ->virt 
-        # and we need them as: occ -> virt 
-        if '->' in buff:
-            buff=buff.replace('->','-> ')
-            buff=buff.split()
-            buff2=float(buff[3])
-            buff2=2*buff2**2
-            buff2=format(float(buff2),'.2f')
-            buff2=str(buff2)
-            occ.append(int(buff[0]))
-            virt.append(int(buff[2]))
-            coeff.append(buff[3])
-            contr.append(buff2)
-        if 'Excited State' in buff:
-            break
+            outf.write(f"Excited State {line[2]}\n"
+                       f"    nm = {line[6]}    f = {line[8][2:]}\n")
 
-    # sort contributions in ascending virtual orbitals
-    virt,occ,coeff,contr=(list(t) for t in zip(*sorted(zip(virt,occ,coeff,contr))))
-    for k in range(0,len(occ)):
-        buff=str(occ[k])+' -> '+str(virt[k])+'  '+str(coeff[k])+'  contr='+str(contr[k])+'\n'
-        outf.write(buff)
-    outf.write('\n')
-outf.close()
+            occ, virt, coeff, contr = [], [], [], []
+
+            for j in range(1, 100):
+                next_line = linecache.getline(logfile, i + j).strip()
+                if '->' in next_line:
+                    get_orbitals(next_line, occ, virt, coeff, contr)
+                if 'Excited State' in next_line:
+                    break
+
+            for k in range(len(occ)):
+                outf.write(f"    {occ[k]} -> {virt[k]}    {coeff[k]}    "
+                           f"contr = {contr[k]}\n")
+
+            outf.write('\n')
+
+    return None
+
+
+def main():
+    """Main program."""
+    parser = argparse.ArgumentParser(
+        description="Analyze TD-DFT calculations from Gaussian09 log files.")
+    parser.add_argument('logfile',
+                        help="Path to the Gaussian09 log file.")
+    parser.add_argument('--nm_min', type=int, default=50,
+                        help="Minimum excitation wavelength in nm.")
+    parser.add_argument('--nm_max', type=int, default=150,
+                        help="Maximum excitation wavelength in nm.")
+    parser.add_argument('--f_osc_min', type=float, default=0.01,
+                        help="Minimum oscillator strength.")
+    args = parser.parse_args()
+
+    try:
+        states, index = read_log_file(args.logfile, args.nm_min, args.nm_max,
+                                      args.f_osc_min)
+        write_output_file(args.logfile, index)
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+if __name__ == '__main__':
+    main()
 

@@ -1,0 +1,25 @@
+Excited State 3:
+    nm = 131.08    f = 0.0862
+    4 -> 6    0.70452    contr = 0.99
+
+Excited State 4:
+    nm = 108.54    f = 0.0558
+    4 -> 7    0.70503    contr = 0.99
+
+Excited State 5:
+    nm = 90.01    f = 0.2419
+    3 -> 6    0.70370    contr = 0.99
+
+Excited State 7:
+    nm = 75.15    f = 0.0896
+    3 -> 7    0.69136    contr = 0.96
+
+Excited State 8:
+    nm = 69.62    f = 0.1322
+    5 -> 9    0.70607    contr = 1.00
+
+Excited State 9:
+    nm = 64.05    f = 0.1795
+    3 -> 9    0.14675    contr = 0.04
+    4 -> 8    0.68966    contr = 0.95
+
