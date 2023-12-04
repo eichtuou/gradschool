@@ -100,6 +100,7 @@ def read_logfile(logfile, wavenum_min=50, wavenum_max=150, oscillator_min=0.01):
     return excited_states
 
 
+<<<<<<< HEAD
 def get_orbitals(line, orbitals):
     """Get orbital contributions to excited state.
 
@@ -119,6 +120,16 @@ def get_orbitals(line, orbitals):
     orbitals["occupied"].extend([line[0]])
     orbitals["virtual"].extend([line[2]])
     orbitals["coefficients"].extend([line[3]])
+=======
+def get_orbitals(line, occ, virt, coeff, contr):
+    """Get orbital contributions to excited state."""
+    elements = line.split()
+    contr_value = 2 * float(elements[3]) ** 2
+    occ.append(int(elements[0]))
+    virt.append(int(elements[2]))
+    coeff.append(elements[3])
+    contr.append(f"{contr_value:.2f}")
+>>>>>>> 01b7b9b (fixed docstring on analyzeTDDFT.py)
 
     return None
 
