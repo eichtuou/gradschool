@@ -1,119 +1,165 @@
-"""
-Author: Jessica M. Gonzalez-Delgado
-    North Carolina State University
+"""This script converts a BIND file into a COM file."""
 
-This script converts a bind file into a com file.
-
-Run as: python bind2com.py
-"""
-
-import sys
+import argparse
 from itertools import islice
 
 
-# check
-def check_input(argvs):
-    if len(argvs) == 1:
-        print("Error! No bind file specified.")
-        print("Exiting now...")
-        sys.exit()
+def validate_input(bindfile):
+    """
+    Validate input arguments
 
-    bindfile = str(argvs[1])
+    Parameters
+    ----------
+    bindfile : str
+        Path to the BIND file
 
-    if bindfile[-5:] != ".bind":
-        print("Error! File is not bind format.")
-        print("Exiting now...")
-        sys.exit()
+    Returns
+    ----------
+    None
+    """
+    if not bindfile.endswith(".bind"):
+        raise argparse.ArgumentTypeError("Error! File is not a BIND file.")
 
     return bindfile
 
 
-# get lines of interest from bind file
-def get_index(ifile):
+def flag_lines(bindfile):
+    """
+    Find line numbers containing information of interest.
+
+    Parameters
+    ----------
+    bindfile : str
+        Path to the BIND file
+
+    Returns
+    ----------
+    flags : lst (int)
+        List with flagged line numbers.
+    """
+
     flags = []
-    with open(ifile, 'r') as fo:
-        jump = False
-        for num, line in enumerate(fo, 1):
+    with open(bindfile, 'r') as file:
+        jump_line = False
+        for num, line in enumerate(file, 2):
             if "Geometry Crystallographic" in line:
                 flags.append(num)
             elif "&" in line:
-                if jump is False:
-                    flags.append(num)
-                    jump = True
+                if jump_line is False:
+                    flags.append(num - 1)
+                    jump_line = True
             elif "Crystal Spec" in line:
                 flags.append(num)
 
     return flags
 
 
-# get lattice coordiantes
-def get_lattice(ifile, flags):
-    a = 0.0
-    b = 0.0
-    c = 0.0
-    with open(ifile) as lines:
-        for line in islice(lines, flags[-1], flags[-1]+1):
-            buff = line.strip().split()
-            a += float(buff[0])
-            b += float(buff[1])
-            c += float(buff[2])
-    a = format(a, '.9f')
-    b = format(b, '.9f')
-    c = format(c, '.9f')
+def get_lattice(bindfile, flags):
+    """Get lattice parameters
 
-    return a, b, c
+    Parameters
+    ----------
+    bindfile : str
+        Path to the BIND file
+    flags : lst (int)
+        List with flagged line numbers.
 
+    Returns
+    ----------
+    lattice : tuple (str)
+        Lattice parameters (a, b, c)
+    """
+    with open(bindfile) as lines:
+        line = next(islice(lines, flags[-1], flags[-1] + 1), None)
+        if line:
+            lattice = tuple(map(lambda x: format(
+                float(x), '.9f'), line.strip().split()[:3])
+            )
+            return lattice
 
-# get atoms and coordinates
-def get_atoms(ifile, flags, abc):
-    atoms = []
-    with open(ifile) as lines:
-        # this will get line index[i]+1 until line index[j]
-        # total num lines = index[j] - index[i]+1)
-        for line in islice(lines, flags[0]+1, flags[1]-1):
-            buff = line
-            buff = buff.strip().split()
-            buff[2] = float(buff[2])*float(abc[0])
-            buff[3] = float(buff[3])*float(abc[1])
-            buff[4] = float(buff[4])*float(abc[2])
-            buff[2] = format(buff[2], '.9f')
-            buff[3] = format(buff[3], '.9f')
-            buff[4] = format(buff[4], '.9f')
-            buff = ' '.join(map(str, buff))
-            atoms.append(buff)
-
-    return atoms
+    return ("0.0", "0.0", "0.0")
 
 
-# make com file
-def make_comfile(ifile, atoms, lattice):
-    header = "# hf/sto-3g\n\n"+ifile[:-5]+"\n\n0 1\n"
-    zeros = '0.000000000'
-    comfile = open(ifile[:-4]+"com", 'w')
-    comfile.write(header)
-    for i in range(0, len(atoms)):
-        comfile.write(atoms[i])
-        comfile.write('\n')
-    for i in range(0, len(lattice)):
-        if i == 0:
-            buff = 'Tv '+str(lattice[i])+' '+zeros+' '+zeros
-        elif i == 1:
-            buff = 'Tv '+zeros+' '+str(lattice[i])+' '+zeros
-        elif i == 2:
-            buff = 'Tv '+zeros+' '+zeros+' '+str(lattice[i])
-        comfile.write(buff)
-        comfile.write('\n')
-    comfile.close()
+def get_coords(bindfile, flags, lattice):
+    """
+    Get atomic coordinates and scale them with lattice parameters.
+
+    Parameters
+    ----------
+    bindfile : str
+        Path to the BIND file
+    flags : lst (int)
+        List with flagged line numbers.
+    lattice : tuple (str)
+        Lattice parameters (a, b, c)
+
+    Returns
+    ----------
+    coords : lst (str)
+        List of atomic coordinates, scaled with lattice information.
+    """
+    coords = []
+    scaling_factors = list(map(float, lattice))
+
+    with open(bindfile) as lines:
+        for line in islice(lines, flags[0] + 1, flags[1] - 1):
+            line = line.strip().split()
+            xyz = [format(float(line[i]) * scaling_factors[i - 2], '.9f')
+                   for i in range(2, 5)]
+            coords.append(
+                f"{line[0]} {line[1]} {xyz[0]} {xyz[1]} {xyz[2]}")
+
+    return coords
 
 
-# MAIN PROGRAM
-def main(argvs):
-    bindfile = check_input(argvs)
-    lattice = get_lattice(bindfile, get_index(bindfile))
-    atoms = get_atoms(bindfile, get_index(bindfile), lattice)
-    make_comfile(bindfile, atoms, lattice)
+def write_comfile(bindfile, coords, lattice):
+    """Write the COM file.
+
+    Parameters
+    ----------
+    bindfile : str
+        Path to the BIND file
+    coords : lst (str)
+        List of atomic coordinates, scaled with lattice information.
+    lattice : tuple (str)
+        Lattice parameters (a, b, c)
+
+    Returns
+    ----------
+    None
+    """
+    header = f"# hf/sto-3g\n\n{bindfile[:-5]}\n\n0 1\n"
+    zeros = "0.000000000"
+    lattice_vectors = [
+        f"Tv {lattice[0]} {zeros} {zeros}",
+        f"Tv {zeros} {lattice[1]} {zeros}",
+        f"Tv {zeros} {zeros} {lattice[2]}"
+    ]
+
+    with open(bindfile[:-5] + ".com", 'w') as comfile:
+        comfile.write(header)
+        comfile.write("\n".join(coords) + "\n")
+        comfile.write("\n".join(lattice_vectors) + "\n")
+
+    return None
 
 
-# RUN PROGRAM
-argvs = sys.argv
-main(argvs)
+def main():
+    """Main Program"""
+    parser = argparse.ArgumentParser(
+        description="Convert a BIND file to a COM file.")
+    parser.add_argument("bindfile", type=validate_input,
+                        help="Path to the BIND file.")
+    args = parser.parse_args()
+
+    bindfile = args.bindfile
+    flags = flag_lines(bindfile)
+    lattice = get_lattice(bindfile, flags)
+    coords = get_coords(bindfile, flags, lattice)
+    write_comfile(bindfile, coords, lattice)
+
+    return None
+
+
+if __name__ == "__main__":
+    main()
