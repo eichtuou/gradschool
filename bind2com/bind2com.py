@@ -4,28 +4,33 @@ import argparse
 from itertools import islice
 
 
-def validate_input(bindfile):
-    """
-    Validate input arguments
-
-    Parameters
-    ----------
-    bindfile : str
-        Path to the BIND file
+def parse_arguments():
+    """Validate input arguments
 
     Returns
     ----------
-    None
+    args : argparse obj
+        Parsed command-line arguments.
     """
-    if not bindfile.endswith(".bind"):
+    parser = argparse.ArgumentParser(
+        description="Convert a BIND file to a COM file."
+    )
+    parser.add_argument(
+        "bindfile",
+        type=str,
+        help="Path to the BIND file."
+    )
+
+    args = parser.parse_args()
+
+    if not args.bindfile.endswith(".bind"):
         raise argparse.ArgumentTypeError("Error! File is not a BIND file.")
 
-    return bindfile
+    return args
 
 
 def flag_lines(bindfile):
-    """
-    Find line numbers containing information of interest.
+    """Find line numbers containing information of interest.
 
     Parameters
     ----------
@@ -50,6 +55,7 @@ def flag_lines(bindfile):
                     jump_line = True
             elif "Crystal Spec" in line:
                 flags.append(num)
+                break
 
     return flags
 
@@ -81,8 +87,7 @@ def get_lattice(bindfile, flags):
 
 
 def get_coords(bindfile, flags, lattice):
-    """
-    Get atomic coordinates and scale them with lattice parameters.
+    """Get atomic coordinates and scale them with lattice parameters.
 
     Parameters
     ----------
@@ -146,12 +151,7 @@ def write_comfile(bindfile, coords, lattice):
 
 def main():
     """Main Program"""
-    parser = argparse.ArgumentParser(
-        description="Convert a BIND file to a COM file.")
-    parser.add_argument("bindfile", type=validate_input,
-                        help="Path to the BIND file.")
-    args = parser.parse_args()
-
+    args = parse_arguments()
     bindfile = args.bindfile
     flags = flag_lines(bindfile)
     lattice = get_lattice(bindfile, flags)
