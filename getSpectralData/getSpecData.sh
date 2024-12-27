@@ -4,8 +4,6 @@
 # fetches the excitations and stores them in a *_sticks.dat file. The script then
 # calls another pearl script that reads the *_sticks.dat file and creates and stores
 # spectral information in a *_spec.dat file.
-#
-# Run as: bash getspecdata.sh
 
 # parent directory
 parent="parent-dir"
