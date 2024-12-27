@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+#BSUB -R span[ptile=8]
+#BSUB -R "model != L5535"
+#BSUB -R "mem>24100"
+#BSUB -q cos
+#BSUB -W 24:00
+#BSUB -n 2
+#BSUB -J test_L2_cube_40
+#BSUB -o output
+#BSUB -e error
+
+echo jobid = $LSB_JOBID
+echo hosts = $LSB_HOSTS
+
+date
+cubebuilder test_L2_cube_40.in test_aligned.bind.edyn.wave
+date

@@ -1,89 +1,163 @@
-'''
-Author: Jessica M. Gonzalez-Delgado
-		North Carolina State University
+"""This script generates input files and submission scripts for IETsim cubebuilder."""
 
-This script generates scripts for making cube files later used 
-for creating a gif of the simulation.
-
-Run as: python makeCubes4gif.py 
-'''
-
-#!/usr/bin/python
-import sys
 import os
+import argparse
+import textwrap
 
 
-#--------------------- USER INPUT ---------------------#
-name = 'febpycn4s_par_cn_a'
-wavef = name+'_aligned.bind.edyn.wave'
-orbital = 'L2'
-cube = name+'_'+orbital+'_cube'
-#time_fs = 4000
-time_fs = 100
-suball = []
-#------------------------------------------------------#
+def parse_arguments():
+    """Validate input arguments
+
+    Returns
+    ----------
+    args : argparse obj
+        Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description="Generate cube calculation and submission scripts.")
+    parser.add_argument("molecule", type=str, help="Molecule name.")
+    parser.add_argument("--orbital", type=str, default="L2",
+                        help="Orbital name (default: L2).")
+    parser.add_argument("--time_fs", type=int, default=50,
+                        help="Total time in femtoseconds (default: 50).")
+
+    return parser.parse_args()
 
 
-# generate cube and submission scripts
-for i in range(0,time_fs+10,10):
-    if i == 1:
-        continue
-    if i == 0:
-        j = i+1
-    else:
-        j = i
+def generate_input_script(cubefile, timestep):
+    """Generate a cube calculation input script.
 
-    # make cube script
-    filename = cube+'_'+str(j)+'.in' 
-    buff1 = 'region\n\
-0.25\n\
-0.0000  15.24749188\n\
-0.0000  10.48704607\n\
-0.0000  26.00000000\n\
-\n\
-name\n'+filename[:-3]+'\n\
-\n\
-make\n1\n'
-    fo = open(filename,'w')
-    fo.write(buff1)
-    fo.write(str(j))
-    fo.close()
-    os.chmod('./'+filename,0755)
-    
-    # make submission script 
-    sfilename = 'subcube_'+filename[:-3]
-    buff2 = '\
-#!/usr/bin/bash\n\
-#BSUB -R span[ptile=8]\n\
-#BSUB -R "model != L5535"\n\
-#BSUB -R "mem>24100"\n\
-#BSUB -q cos\n\
-#BSUB -W 24:00\n\
-#BSUB -n 2\n\
-#BSUB -J '+filename[:-3]+'\n\
-#BSUB -o output\n\
-#BSUB -e error\n\
-\n\
-echo jobid = $LSB_JOBID\n\
-echo hosts = $LSB_HOSTS\n\
-\n\
-date\n\
-cubebuilder '+filename+' '+wavef+'\n\
-date\n\n'
-    fo = open(sfilename,'w')
-    fo.write(buff2)
-    fo.close()
-    os.chmod('./'+sfilename,0755)
+    Parameters
+    ----------
+    cubefile : str
+        Name of the cube input script.
+    timestep : int
+        Time step index.
 
-    # for submitting all jobs at once
-    subcmd = 'bsub < '+sfilename
-    suball.append(subcmd)
+    Returns
+    -------
+    None
+    """
+    buffer = textwrap.dedent(f"""\
+        region
+        0.25
+        0.0000  15.24749188
+        0.0000  10.48704607
+        0.0000  26.00000000
 
-# generate input stream for bash script
-with open('suball.sh','w') as fo:
-    for i in range(0,len(suball)):
-        fo.write(suball[i])
-        fo.write('\n')
-# commented this out because we are not submitting the jobs
-#os.chmod('./suball.sh',0755)
+        name
+        {cubefile[:-3]}
 
+        make
+        1
+        {timestep}
+    """)
+
+    with open(cubefile, 'w') as file:
+        file.write(buffer)
+    os.chmod(cubefile, 0o755)
+
+    return None
+
+
+def generate_submission_script(subfile, cubefile, wavefile):
+    """Generate a submission script for the cube job.
+
+    Parameters
+    ----------
+    subfile : str
+        Name of the submission script.
+    cubefile : str
+        Name of the cube input script.
+    wavefile : str
+        Name of the wave file.
+
+    Returns
+    -------
+    None
+    """
+    buffer = textwrap.dedent(f"""\
+        #!/usr/bin/bash
+        #BSUB -R span[ptile=8]
+        #BSUB -R "model != L5535"
+        #BSUB -R "mem>24100"
+        #BSUB -q cos
+        #BSUB -W 24:00
+        #BSUB -n 2
+        #BSUB -J {cubefile[:-3]}
+        #BSUB -o output
+        #BSUB -e error
+
+        echo jobid = $LSB_JOBID
+        echo hosts = $LSB_HOSTS
+
+        date
+        cubebuilder {cubefile} {wavefile}
+        date
+    """)
+
+    with open(subfile, 'w') as file:
+        file.write(buffer)
+    os.chmod(subfile, 0o755)
+
+    return None
+
+
+def generate_all_scripts(cubename, wavefile, time_fs):
+    """
+    Process time steps to generate cube and submission scripts.
+
+    Parameters
+    ----------
+    cubename : str
+        Base name for cubefiles.
+    wavefile : str
+        Name of wave file.
+    time_fs : int
+        Total simulation time in femtoseconds.
+
+    Returns
+    -------
+    None
+    """
+    submission_commands = []
+
+    for timestep in range(0, time_fs + 10, 10):
+
+        if timestep == 0:
+            timestep += 1
+
+        # generate input and submission scripts
+        cubefile = f"{cubename}_{timestep}.in"
+        subfile = f"subcube_{cubefile[:-3]}"
+        generate_input_script(cubefile, timestep)
+        generate_submission_script(subfile, cubefile, wavefile)
+
+        # record command for batch submission
+        submission_commands.append(f"bsub < {subfile}")
+
+    # batch submission script
+    batchfile = 'submit_batch.sh'
+    with open(batchfile, 'w') as file:
+        for command in submission_commands:
+            file.write(f"{command}\n")
+    os.chmod(batchfile, 0o755)
+
+    return None
+
+
+def main():
+    """Main Program."""
+    args = parse_arguments()
+
+    molecule = args.molecule
+    orbital = args.orbital
+    time_fs = args.time_fs
+    cubename = f"{molecule}_{orbital}_cube"
+    wavefile = f"{molecule}_aligned.bind.edyn.wave"
+
+    generate_all_scripts(cubename, wavefile, time_fs)
+
+
+if __name__ == "__main__":
+    main()
