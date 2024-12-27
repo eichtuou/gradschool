@@ -75,7 +75,7 @@ def get_charges_coords(fchkfile, flags):
 
     Returns
     -------
-    tuple (lst)
+    nuclear_charges, coordinates : tuple (list)
         Tuple with two lists: element symbols, cartesian coordinates [Angs.]
     """
 

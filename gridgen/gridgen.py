@@ -96,7 +96,7 @@ def get_xyz_coords(xyzfile):
 
     Returns
     ----------
-    x_coords, y_coords, z_coords : tuple (lst)
+    x_coords, y_coords, z_coords : tuple (list)
         Lists of x, y, and z coordinates.
     """
     x_coords, y_coords, z_coords = [], [], []
@@ -117,11 +117,11 @@ def get_min_max_coords(x_coords, y_coords, z_coords, x_pad, y_pad, z_pad):
 
     Parameters
     ----------
-    x_coords : lst (float)
+    x_coords : list (float)
         List of x coordinates.
-    y_coords : lst (float)
+    y_coords : list (float)
         List of y coordinates.
-    z_coords : lst (float)
+    z_coords : list (float)
         List of z coordinates.
     x_pad : float
         Padding in the x direction [Ang].
@@ -132,7 +132,7 @@ def get_min_max_coords(x_coords, y_coords, z_coords, x_pad, y_pad, z_pad):
 
     Returns
     ----------
-    min_coords, max_coords : tuple (lst)
+    min_coords, max_coords : tuple (list)
         Lists of minimum and maximum coordintes.
     """
     min_coords = [
@@ -154,9 +154,9 @@ def generate_grid(min_coords, max_coords, nx, ny, nz):
 
     Parameters
     ----------
-    min_coords : tuple (lst)
+    min_coords : tuple (list)
         Lists of minimum coordintes.
-    max_coords : tuple (lst)
+    max_coords : tuple (list)
         Lists of maximum coordintes.
     nx : int
         Number of partitions in the x direction (must be n+1 for n cubes).
@@ -204,7 +204,7 @@ def generate_input_files(xpts, ypts, zpts, dx, dy, dz, grid):
         Step size in the y direction.
     dz : float
         Step size in the z direction.
-    grid : lst (float)
+    grid : list (float)
         List of grid coordinates (cube origins).
 
     Returns

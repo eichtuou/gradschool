@@ -39,7 +39,7 @@ def flag_lines(bindfile):
 
     Returns
     ----------
-    flags : lst (int)
+    flags : list (int)
         List with flagged line numbers.
     """
 
@@ -67,7 +67,7 @@ def get_lattice(bindfile, flags):
     ----------
     bindfile : str
         Path to the BIND file
-    flags : lst (int)
+    flags : list (int)
         List with flagged line numbers.
 
     Returns
@@ -93,14 +93,14 @@ def get_coords(bindfile, flags, lattice):
     ----------
     bindfile : str
         Path to the BIND file
-    flags : lst (int)
+    flags : list (int)
         List with flagged line numbers.
     lattice : tuple (str)
         Lattice parameters (a, b, c)
 
     Returns
     ----------
-    coords : lst (str)
+    coords : list (str)
         List of atomic coordinates, scaled with lattice information.
     """
     coords = []
@@ -124,7 +124,7 @@ def write_comfile(bindfile, coords, lattice):
     ----------
     bindfile : str
         Path to the BIND file
-    coords : lst (str)
+    coords : list (str)
         List of atomic coordinates, scaled with lattice information.
     lattice : tuple (str)
         Lattice parameters (a, b, c)
