@@ -1,13 +1,13 @@
 # IET bars
 
-set terminal postscript color enhanced font "Helvetica,18" 
+set terminal postscript color enhanced font "Helvetica,18"
 set output 'IETrates_bars_all.eps'
 
 set border lw 2.5
 unset key
 unset colorbox
 
-set boxwidth 1.00 relative 
+set boxwidth 1.00 relative
 set style fill solid 1.00 noborder
 
 unset xtics
