@@ -9,8 +9,7 @@ from itertools import islice
 
 
 def parse_arguments():
-    """
-    Validate input arguments
+    """Validate input arguments
 
     Returns
     ----------
