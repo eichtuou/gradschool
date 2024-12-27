@@ -8,7 +8,7 @@ set bmargin 0
 set lmargin 6
 set rmargin 10
 
-set multiplot layout 2,1 
+set multiplot layout 2,1
 
 set xrange [350:700]
 set yrange [0:75]
@@ -17,7 +17,7 @@ set y2range [0:0.2]
 set ytics 0,25, 75
 set y2tics 0, 0.1, 0.2
 set ytics nomirror out
-set y2tics nomirror out 
+set y2tics nomirror out
 unset xtics
 
 set ytics textcolor rgb "black"
@@ -37,7 +37,7 @@ set y2label "Oscillator Strength" offset 1,6
 set xlabel "Wavelength [nm]"
 
 set xtics textcolor rgbcolor "black"
-set xtics nomirror out 
+set xtics nomirror out
 
 set ytics textcolor rgb "gray"
 set y2tics textcolor rgb "gray"

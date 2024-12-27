@@ -1,176 +1,251 @@
-'''
-Author: Jessica M. Gonzalez-Delgado
-	North Carolina State University
+"""This script reads an molecular structure [XYZ] file and creates a
+box around the system with a user specified "padding" in units of
+Angstroms. The box is then partitioned into smaller boxes [inp_cube_*.dat],
+which are then utilized as part of the input needed for performing parallel
+denstity calculations of the whole system in Gaussian09.
+"""
 
-This script reads an molecular structure [XYZ] file and creates a box around the 
-system with a user specified "padding" in units of Angstroms. The box is then
-partitioned into smaller boxes [inp_cube_*.dat], which are then utilized as part 
-of the input needed for performing parallel denstity calculations in the whole 
-system in Gaussian09.
-
-Run as: python gridgen.py file.xyz
-'''
-
-#!/usr/bin/python
-import sys
+import argparse
 import numpy as np
 from itertools import product
 
 
-#-------------------- USER INPUT SECTION --------------------!
-xpad = 2.0             # padding in x direction [angs]
-ypad = 2.0             # padding in y direction [angs]
-zpad = 2.0             # padding in z direction [angs]
-nx = 4                 # has to be n+1, n = cubes in x direction
-ny = 4                 # has to be n+1, n = cubes in y direction
-nz = 4                 # has to be n+1, n = cubes in z direction
-xpts = 175             # points in x direction (resolution) 
-ypts = 175             # points in y direction (resolution) 
-zpts = 175             # points in z direction (resolution) 
-#------------------------------------------------------------!
+def parse_arguments():
+    """Validate input arguments
+
+    Returns
+    ----------
+    args : argparse obj
+        Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description="Generate grid inputs for Gaussian09 calculations.")
+    parser.add_argument("xyzfile", type=str, help="Path to the XYZ file.")
+    parser.add_argument(
+        "--xpad",
+        type=float,
+        default=2.0,
+        help="Padding in the x direction [Angs.].")
+    parser.add_argument(
+        "--ypad",
+        type=float,
+        default=2.0,
+        help="Padding in the y direction [Angs.].")
+    parser.add_argument(
+        "--zpad",
+        type=float,
+        default=2.0,
+        help="Padding in the z direction [Angs.].")
+    parser.add_argument(
+        "--nx",
+        type=int,
+        default=4,
+        help="Number of partitions in the x direction (must be n+1 for n cubes).")
+    parser.add_argument(
+        "--ny",
+        type=int,
+        default=4,
+        help="Number of partitions in the y direction (must be n+1 for n cubes).")
+    parser.add_argument(
+        "--nz",
+        type=int,
+        default=4,
+        help="Number of partitions in the z direction (must be n+1 for n cubes).")
+    parser.add_argument(
+        "--xpts",
+        type=int,
+        default=175,
+        help="Number of points in the x direction (resolution).")
+    parser.add_argument(
+        "--ypts",
+        type=int,
+        default=175,
+        help="Number of points in the y direction (resolution).")
+    parser.add_argument(
+        "--zpts",
+        type=int,
+        default=175,
+        help="Number of points in the z direction (resolution).")
+
+    args = parser.parse_args()
+
+    if not args.xyzfile.endswith(".xyz"):
+        parser.error("The input file must be in XYZ format.")
+
+    if any(value < 1 for value in (
+        args.nx,
+        args.ny,
+        args.nz,
+        args.xpts,
+        args.ypts,
+        args.zpts)
+    ):
+        parser.error(
+            "Grid size and resolution must be greater than or equal to 1.")
+
+    return args
 
 
-# check 
-def check():
-    if len(sys.argv[1]) == 0:
-        print "Error! No XYZ file specified."
-        print "Exiting now..."
-        sys.exit()
+def get_xyz_coords(xyzfile):
+    """Get atomic coordinated from the XYZ file.
 
-    if sys.argv[1][-4:] != ".xyz": 
-        print "Error! File is not XYZ format."
-        print "Exiting now..."
-        sys.exit()
+    Parameters
+    ----------
+    xyzfile : str
+        Path to the XYZ file.
 
-    if xpad < 0 or ypad < 0 or zpad < 0:
-        print "Error! Padding cannot be less than 0 Angstroms."
-        print "Exiting now..."
-        sys.exit()
+    Returns
+    ----------
+    x_coords, y_coords, z_coords : tuple (list)
+        Lists of x, y, and z coordinates.
+    """
+    x_coords, y_coords, z_coords = [], [], []
 
-    if nx < 1 or ny < 1 or nz < 1: 
-        print "Error! That cube partition is not possible."
-        print "Exiting now..."
-        sys.exit()
-
-    if xpts < 1 or ypts < 1 or zpts < 1: 
-        print "Error! That resolution is not possible."
-        print "Exiting now..."
-        sys.exit()
-
-    xyzfile=sys.argv[1]
-    
-    return xyzfile
-
-
-# get xyz coordinates
-def get_xyz(xyzfile):
-    xcords = []
-    ycords = []
-    zcords = []
-
-    with open(xyzfile) as fo:
-        lines = fo.readlines()
-        lines = lines[2:]
-
+    with open(xyzfile) as file:
+        lines = file.readlines()[2:]
         for line in lines:
-            line = line.strip('\n').split()
-            xcords.append(float(line[1]))
-            ycords.append(float(line[2]))
-            zcords.append(float(line[3]))
+            _, x, y, z = line.split()
+            x_coords.append(float(x))
+            y_coords.append(float(y))
+            z_coords.append(float(z))
 
-    return xcords,ycords,zcords
-
-
-# create box with padding
-def make_box(x,y,z,xpad,ypad,zpad):
-    origin = []
-    maxcords = []
-
-    origin.append(min(x)-xpad)
-    origin.append(min(y)-ypad)
-    origin.append(min(z)-zpad)
-
-    maxcords.append(max(x)+xpad)
-    maxcords.append(max(y)+ypad)
-    maxcords.append(max(z)+zpad)
-
-    return origin,maxcords
+    return x_coords, y_coords, z_coords
 
 
-# split box
-def split_box(mincords,maxcords,nx,ny,nz):
-    # get dimensions
-    xdim = float(format(float(maxcords[0]-mincords[0]),'.9f'))
-    ydim = float(format(float(maxcords[1]-mincords[1]),'.9f'))
-    zdim = float(format(float(maxcords[2]-mincords[2]),'.9f'))
+def get_min_max_coords(x_coords, y_coords, z_coords, x_pad, y_pad, z_pad):
+    """Calculate the bounding box around molecule with specified padding.
 
+    Parameters
+    ----------
+    x_coords : list (float)
+        List of x coordinates.
+    y_coords : list (float)
+        List of y coordinates.
+    z_coords : list (float)
+        List of z coordinates.
+    x_pad : float
+        Padding in the x direction [Ang].
+    y_pad : float
+        Padding in the y direction [Ang].
+    z_pad : float
+        Padding in the z direction [Ang].
+
+    Returns
+    ----------
+    min_coords, max_coords : tuple (list)
+        Lists of minimum and maximum coordintes.
+    """
+    min_coords = [
+        min(x_coords) - x_pad,
+        min(y_coords) - y_pad,
+        min(z_coords) - z_pad
+    ]
+    max_coords = [
+        max(x_coords) + x_pad,
+        max(y_coords) + y_pad,
+        max(z_coords) + z_pad
+    ]
+
+    return min_coords, max_coords
+
+
+def generate_grid(min_coords, max_coords, nx, ny, nz):
+    """Generate coordinate grid.
+
+    Parameters
+    ----------
+    min_coords : tuple (list)
+        Lists of minimum coordintes.
+    max_coords : tuple (list)
+        Lists of maximum coordintes.
+    nx : int
+        Number of partitions in the x direction (must be n+1 for n cubes).
+    ny : int
+        Number of partitions in the y direction (must be n+1 for n cubes).
+    nz : int
+        Number of partitions in the z direction (must be n+1 for n cubes).
+
+    Returns
+    ----------
+    dx, dy, dz, grid : tuple
+        Step sizes (dx, dy, dz) and grid coordinates.
+    """
     # step size
-    # needed for input streams
-    dx = (xdim/(nx-1))
-    dy = (ydim/(ny-1))
-    dz = (zdim/(nz-1))
+    dx = (max_coords[0] - min_coords[0]) / (nx - 1)
+    dy = (max_coords[1] - min_coords[1]) / (ny - 1)
+    dz = (max_coords[2] - min_coords[2]) / (nz - 1)
 
-    # list of coordinates for smaller boxes 
-    # needed for input streams 
-    xgrid = np.delete(np.linspace(mincords[0],maxcords[0],nx),nx-1)
-    ygrid = np.delete(np.linspace(mincords[1],maxcords[1],ny),ny-1)
-    zgrid = np.delete(np.linspace(mincords[2],maxcords[2],nz),nz-1)
+    # grid
+    x_grid = np.delete(np.linspace(min_coords[0], max_coords[0], nx), nx - 1)
+    y_grid = np.delete(np.linspace(min_coords[1], max_coords[1], ny), ny - 1)
+    z_grid = np.delete(np.linspace(min_coords[2], max_coords[2], nz), nz - 1)
+    grid = list(product(x_grid, y_grid, z_grid))
 
-    return dx,dy,dz,list(product(xgrid,ygrid,zgrid))
+    if len(grid) != ((nx - 1) * (ny - 1) * (nz - 1)):
+        raise ValueError("Mismatch between cube count and grid coordinates.")
 
-
-# create input streams for calculation submissions
-def make_instreams(nx,ny,nz,xpts,ypts,zpts,dx,dy,dz,cords):
-    # total number of cubes
-    tcubes = (nx-1)*(ny-1)*(nz-1)
-
-    # quick check
-    if tcubes != len(cords):
-        print "Something went wrong."
-        print "Exiting now..."
-        sys.exit()
-
-    # clean coordinates
-    for i in range(0,len(cords)):
-        buff = str(cords[i]).strip('()')
-        buff = buff.replace(',','')
-        cords[i] = buff
-
-    # adjust resolution --> steps/points
-    rsln = []
-    dx = format(float(dx/xpts),'.9f')
-    dy = format(float(dy/ypts),'.9f')
-    dz = format(float(dz/zpts),'.9f')
-    zeros = '0.000000000'
-    rsln.append(str(xpts)+', '+dx+', '+zeros+', '+zeros)
-    rsln.append(str(ypts)+', '+zeros+', '+dy+', '+zeros)
-    rsln.append(str(zpts)+', '+zeros+', '+zeros+', '+dz)
-
-    # make input streams 
-    for i in range(1,tcubes+1):
-        instream_file = 'inp_cube_'+str(i)+'.dat'
-        buff = cords[i-1].split()
-        buff[0] = format(float(buff[0]),'.9f')
-        buff[1] = format(float(buff[1]),'.9f')
-        buff[2] = format(float(buff[2]),'.9f')
-        header = '-1, '+buff[0]+', '+buff[1]+', '+buff[2]+'\n'
-        fo = open(instream_file,'w') 
-        fo.write(header)
-        for j in range(3):
-            buff2 = rsln[j].strip()+'\n'
-            fo.write(buff2)
-        fo.close()
+    return dx, dy, dz, grid
 
 
-# MAIN PROGRAM
+def generate_input_files(xpts, ypts, zpts, dx, dy, dz, grid):
+    """Generate input files for each cube in the grid.
+
+    Parameters
+    ----------
+    xpts : int
+        Points in the x direction (resolution).
+    ypts : int
+        Points in the y direction (resolution).
+    zpts : int
+        Points in the z direction (resolution).
+    dx : float
+        Step size in the x direction.
+    dy : float
+        Step size in the y direction.
+    dz : float
+        Step size in the z direction.
+    grid : list (float)
+        List of grid coordinates (cube origins).
+
+    Returns
+    ----------
+    None
+    """
+    resolution = [
+        f"{xpts}, {(dx / xpts):.9f}, 0.000000000, 0.000000000",
+        f"{ypts}, 0.000000000, {(dy / ypts):.9f}, 0.000000000",
+        f"{zpts}, 0.000000000, 0.000000000, {(dz / zpts):.9f}"
+    ]
+
+    for num, (x, y, z) in enumerate(grid, 1):
+        input_file = f"inp_cube_{num}.dat"
+        with open(input_file, 'w') as file:
+            header = f"-1, {x:.9f}, {y:.9f}, {z:.9f}\n"
+            file.write(header)
+            for line in resolution:
+                file.write(f"{line}\n")
+
+    return None
+
+
 def main():
-    xyz = get_xyz(check())
-    box = make_box(xyz[0],xyz[1],xyz[2],xpad,ypad,zpad)
-    boxes = split_box(box[0],box[1],nx,ny,nz)
-    make_instreams(nx,ny,nz,xpts,ypts,zpts,boxes[0],boxes[1],boxes[2],boxes[3])
+    """Main Program."""
+    args = parse_arguments()
+
+    x_coords, y_coords, z_coords = get_xyz_coords(args.xyzfile)
+    min_coords, max_coords = get_min_max_coords(
+        x_coords, y_coords, z_coords, args.xpad, args.ypad, args.zpad)
+    dx, dy, dz, grid = generate_grid(
+        min_coords, max_coords, args.nx, args.ny, args.nz)
+    generate_input_files(
+        args.xpts,
+        args.ypts,
+        args.zpts,
+        dx,
+        dy,
+        dz,
+        grid)
 
 
-
-# RUN PROGRAM
-main()
-
+if __name__ == "__main__":
+    main()

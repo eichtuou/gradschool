@@ -1,9 +1,9 @@
 # wavepacket survival probabilities
 
 set output 'febpycn4CA_survProbs.eps'
-set terminal postscript color enhanced font "Helvetica,16" 
+set terminal postscript color enhanced font "Helvetica,16"
 
-set multiplot layout 2,3 columnsfirst 
+set multiplot layout 2,3 columnsfirst
 
 set xrange [0:2000]
 set yrange [0:1]
@@ -16,7 +16,7 @@ set xtics textcolor "#FFFFFF"
 set tmargin 0
 set bmargin 0
 set lmargin 2
-set rmargin 0 
+set rmargin 0
 
 plot 'febpycn4s_monoCA_aligned_69.bind.edyn.dat' using ($1):($2) title 'LUMO' w l lt 1 lw 3 lc rgb "#000000",\
      'febpycn4s_monoCA_aligned_70.bind.edyn.dat' using ($1):($2) title 'LUMO+1' w l lt 1 lw 3 lc rgb "#FF0000",\

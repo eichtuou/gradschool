@@ -1,9 +1,9 @@
 # IET vs E density plot
 
-set terminal postscript color enhanced font 'Helvetica,14' 
+set terminal postscript color enhanced font 'Helvetica,14'
 set output 'edensityIET_k.eps'
 
-set border lw 2 
+set border lw 2
 set key outside
 
 set ylabel 'k_{IET} (fs^{-1})'
