@@ -1,7 +1,7 @@
-# This script grabs the electronic energy of a series of calculations
-# performed for a potential energy surface scan on different halogentated
-# Fe(tpy)2 complexes. It will only output the information if and only if
-# the calculation converged.
+# This script collects the electronic energy of a series of calculations
+# of a potential energy surface scan on different halogentated Fe(tpy)2
+# complexes. It will only collect the information of a calculation if and
+# only if the calculation converged.
 #
 # Run as: bash getSCF.sh > scf.dat
 
