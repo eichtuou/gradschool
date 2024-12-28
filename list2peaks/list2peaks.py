@@ -24,7 +24,7 @@ def parse_arguments():
     return args
 
 
-def get_peak_info(listfile):
+def get_peaks(listfile):
     """Get peak information from LIST file.
 
     Parameters
@@ -76,7 +76,7 @@ def write_peaksfile(peaksfile, peaks):
 def main():
     """Main Program."""
     args = parse_arguments()
-    peaks = get_peak_info(args.listfile)
+    peaks = get_peaks(args.listfile)
     write_peaksfile(args.peaksfile, peaks)
 
 
