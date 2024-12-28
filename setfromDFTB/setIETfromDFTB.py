@@ -1,6 +1,6 @@
-"""This script generates IETsim input files from a DFTB conformation scan output.
-It also generates submission scripts for each IETsim calculation, and an input
-stream file to submit all the jobs at once.
+"""This script generates IETsim input files from a DFTB conformation
+scan output.It also generates submission scripts for each IETsim
+calculation, and an input stream file to submit all the jobs at once.
 
 Run as: setIETfromDFTB.py > suball.sh
 """
@@ -20,15 +20,12 @@ GEN_CUBE = False                  # generate cube file?
 # --------------------------------------------------------!
 
 
-def gen_submission_scripts(
-        cluster: str,
-        queue: str,
-        conf: str,
-        state: str) -> None:
+def gen_submission_scripts(cluster: str, queue: str,
+                           conf: str, state: str) -> None:
     """Generate submission scripts based on cluster."""
     sub_file = f"subdynamics_{conf}"
     templates = {
-        "henry": textwrap.dedent(f"""\
+        'henry': textwrap.dedent(f"""\
             #!/usr/bin/bash
             #BSUB -R "model != L5535"
             #BSUB -R span[ptile=8]
@@ -69,13 +66,16 @@ def gen_submission_scripts(
         file.write(templates[cluster])
     os.chmod(sub_file, 0o755)
 
+    return None
+
 
 def make_bind_sections(bindmode: str, steps: str,
                        gen_cube: bool) -> Tuple[str, str, str, str]:
     """Generate bottom of bind file depending on the complex."""
     cube_dynamics = "Cube\n\n" if gen_cube else ""
     dynamics = f"Dynamics\n0.1 {steps}\n\n"
-    occupation = "Occupation\n865\n1,2-865\n\n" if 'biCA' in bindmode else "Occupation\n864\n1,2-864\n\n"
+    occupation = "Occupation\n865\n1,2-865\n\n" \
+        if 'biCA' in bindmode else "Occupation\n864\n1,2-864\n\n"
 
     if 'biCA' in bindmode:
         absorbing = textwrap.dedent(r"""\
@@ -276,8 +276,12 @@ def get_particle_states(
 
 
 def gen_organize_files(
-        bindmode: str, conf_and_states: List[Tuple[int, List[str]]],
-        bottom_bind: Tuple[str, str, str, str], cluster: str, queue: str) -> None:
+    bindmode: str,
+    conf_and_states: List[Tuple[int, List[str]]],
+    bottom_bind: Tuple[str, str, str, str],
+    cluster: str,
+    queue: str
+) -> None:
     """Create and organize files for each conformation and particle state."""
     master_dir = os.getcwd()
 
@@ -301,18 +305,18 @@ def gen_organize_files(
             os.chdir("..")
         os.chdir(master_dir)
 
+    return None
 
-def main():
+
+def main() -> None:
     """Main Program."""
     bind_sections = make_bind_sections(MOL_COMPLEX, STEPS, GEN_CUBE)
     conformations = get_conformations(MOL_COMPLEX)
     conf_and_states = get_particle_states(conformations)
-    gen_organize_files(
-        MOL_COMPLEX,
-        conf_and_states,
-        bind_sections,
-        CLUSTER,
-        QUEUE)
+    gen_organize_files(MOL_COMPLEX, conf_and_states,
+                       bind_sections, CLUSTER, QUEUE)
+
+    return None
 
 
 if __name__ == "__main__":
