@@ -1,181 +1,249 @@
-'''
-Author: Jessica M. Gonzalez-Delgado
-        North Carolina State University
+"""This script solves the protein correlation time tau_m (tm) from the
+Model-Free Analysis (MFA). It uses two spectral density functions (J)
+from DOI:10.1007/s10858-007-9214-2
 
-This script solves the protein correlation time tau_m (tm) from the Model-Free
-Analysis (MFA). It uses two spectral density functions (J), one of them includes
-slow and/or fast motions, while the another one does not include those motions. 
+    Equation 2: Spectral density function without slow or fast motions
+        J( %omega ) = frac{2}{5} %tau_m (
+            ( frac{ S_2 }{ 1 + (%omega %tau_m)^2 })
+            + ( frac{ (1 - S_2)(%tau_e + %tau_m)%tau_e }
+                { (%tau_e + %tau_m)^2 + (%omega %tau_e %tau_m)^2 })
+        )
 
-Run as: python tmsolver.py j0.dat 
+    Equation 3: Spectral density function with slow or fast motions
+        J( %omega ) = frac{ 2 }{ 5 } %tau_m (
+            ( frac{ S_2 }{ 1 + (%omega %tau_m)^2 } )
+            + (frac { (1 - S_f)(%tau_f + %tau_m) %tau_f }{
+                (%tau_f + %tau_m)^2 + (%omega %tau_f %tau_m)^2 } )
+            + (frac { (S_f - S_2)(%tau_s + %tau_m) %tau_s }{
+                (%tau_s + %tau_m)^2 + (%omega %tau_s %tau_m)^2 } )
+         )
+"""
 
-Here are the spectral density functions solved for tm using J(0):
-
-    Spectral density function without slow or fast motions
-    Equation (2) from DOI:10.1007/s10858-007-9214-2
-    In terms of tm using J(0):
-        [ -0.4*S2 ] * tm^3
-        [ J - 1.2*S2*te - 0.4*te ] * tm^2
-        [ 2*J*te - 0.4*te^2 ] * tm
-        [ J*te^2 ]
-
-    Spectral density function with slow or fast motions
-    Equation (3) from DOI:10.1007/s10858-007-9214-2
-    In terms of tm using J(0):
-        [ -0.4*S ] * tm^5
-        [ J - 1.2*S*ts - 0.4*Sf*ts - 0.4*tf - 0.8*S*tf + 0.4*Sf*tf ] * tm^4
-        [ 2*J*ts - 0.8*S*ts^2 + 0.4*Sf*ts^2 + 2*J*tf - 0.4*tf^2 - 0.4*S*tf^2 + 0.4*Sf*tf^2 - 0.8*ts*tf - 1.6*S*ts*tf + 1.6*Sf*ts*tf ] * tm^3
-        [ J*ts^2 + J*tf^2 + 4*J*ts*tf - 0.4*ts^2*tf - 1.6*S*ts^2*tf + 1.2*Sf*ts^2*tf - 0.8*ts*tf^2 - 1.2*S*ts*tf^2 + 1.2*Sf*ts*tf^2 ] * tm^2
-        [ 2*J*ts*tf^2 + 2*J*ts^2*tf - 0.4*ts^2*tf^2 - 0.8*S*ts^2*tf^2 + 0.8*Sf*ts^2*tf^2 ] * tm 
-        [ J*ts^2*tf^2 ]
-
-'''
-
-#!/usr/bin/python
+import os
+import argparse
 import numpy as np
-import sys
 
 
-# check input file
-def check():
-    if len(sys.argv) == 0:
-        print "Error! No DAT file specified."
-        print "Exiting now..."
-        sys.exit()
+def parse_arguments():
+    """Validate input arguments
 
-    if sys.argv[1][-3:] != "dat": 
-        print "Error! File is not DAT format."
-        print "Exiting now..."
-        sys.exit()
+    Returns
+    ----------
+    args : argparse obj
+        Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description="Solves the protein correlation time (tm) from the Model-Free Analysis J(0) results.")
+    parser.add_argument(
+        "j0_file",
+        type=str,
+        help="Path to the input J(0) results file.")
 
-    dfile = sys.argv[1]
+    args = parser.parse_args()
 
-    return dfile
+    if not args.j0_file.endswith(".dat"):
+        parser.error("Input file must be in DAT format.")
+    if not os.path.isfile(args.j0_file):
+        parser.error(f"File not found: {args.j0_file}")
 
 
-# get MFA data for each residue
-def getmfadata(dfile):
-    resid = []
-    j_vals = []
-    s_vals = []
-    sf_vals = []
-    ss_vals = []
-    te_vals = []
-    tf_vals = []
-    ts_vals = []
+    return args
 
-    with open(dfile) as fo:
-        for line in fo:
-            line = line.strip().split()
-            if '#' in line[0] :
+
+def get_mfa(j0_file):
+    """Get MFA data for each residue.
+
+    Parameters
+    ----------
+    j0_file : str
+        Path to the J(0) results file.
+
+    Returns
+    -------
+    mfa_data : dict
+        Dictionary containing the MFA results for each residue.
+        Keys : resid, j0, s2, s2_f, s2_s, tau_e, tau_f, tau_s
+    """
+    data = []
+    with open(j0_file, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if not line or line.startswith("#"):
                 continue
-            resid.append(int(line[0]))
-            j_vals.append(float(line[1]))
-            s_vals.append(float(line[2]))
-            sf_vals.append(float(line[3]))
-            ss_vals.append(float(line[4]))
-            te_vals.append(float(line[5]))
-            tf_vals.append(float(line[6]))
-            ts_vals.append(float(line[7]))
+            data.append(line.split())
 
-    return resid,j_vals,s_vals,sf_vals,ss_vals,te_vals,tf_vals,ts_vals 
+    data = np.array(data, dtype=float)
+    mfa_data = {
+        "resid": data[:, 0].astype(int),
+        "j0": data[:, 1],
+        "s2": data[:, 2],
+        "s2_f": data[:, 3],
+        "s2_s": data[:, 4],
+        "tau_e": data[:, 5],
+        "tau_f": data[:, 6],
+        "tau_s": data[:, 7],
+    }
 
-
-# calculate tm values from first density function
-def tm_1(dfile,mfa):
-    tm = 0
-    tm_vals = []
-
-    fo = open(dfile[:-4]+'-tm.dat','w')
-    fo.write("tm values [s] (without slow or fast motions)\n")
-
-    for i in range(0,len(mfa[0])):
-        res = mfa[0][i]
-        j = mfa[1][i]
-        s = mfa[2][i]
-        sf = mfa[3][i]
-        ss = mfa[4][i]
-        te = mfa[5][i]
-        tf = mfa[6][i]
-        ts = mfa[7][i]
-        
-        a = -0.4*s
-        b = j - 1.2*s*te - 0.4*te 
-        c = 2.0*j*te - 0.4*te**2 
-        d = j*te**2 
-    
-        tm = np.roots([a,b,c,d])
-
-        if tm.size == 0 or tm[0] == 0:
-            tm = "None"
-        else:
-            tm = tm[0]
-            tm_vals.append(tm)
-    
-        buff = "residue "+str(res)+" = "+str(tm)+'\n'
-        fo.write(buff)
-
-        if i == len(mfa[0])-1:
-            buff = "Average tm [s] = "+str(np.average(tm_vals))+'\n'
-            fo.write(buff)
-            buff = "Std dev tm [s] = "+str(np.std(tm_vals))+'\n'
-            fo.write(buff)
-
-    fo.close()
+    return mfa_data
 
 
-# tm values from second density function
-def tm_2(dfile,mfa): 
-    tm = 0
-    tm_vals = []
-                                                               
-    fo = open(dfile[:-4]+'-tm.dat','a')
-    fo.write("\ntm values [s] (with slow or fast motions)\n")
-    
-    for i in range(0,len(mfa[0])):
-        res = mfa[0][i]
-        j = mfa[1][i]
-        s = mfa[2][i]
-        sf = mfa[3][i]
-        ss = mfa[4][i]
-        te = mfa[5][i]
-        tf = mfa[6][i]
-        ts = mfa[7][i]
+def taum_eqn2(j0, s2, tau_e):
+    """Tau_m [s] value calculated from the spectral density function without slow or fast motions.
 
-        a =  -0.4*s
-        b =  j - 1.2*s*ts - 0.4*sf*ts - 0.4*tf - 0.8*s*tf + 0.4*sf*tf
-        c =  2.0*j*ts - 0.8*s*(ts**2) + 0.4*sf*(ts**2) + 2*j*tf - 0.4*(tf**2) - 0.4*s*(tf**2) + 0.4*sf*(tf**2) - 0.8*ts*tf - 1.6*s*ts*tf + 1.6*sf*ts*tf
-        d =  j*(ts**2) + j*(tf**2) + 4*j*ts*tf - 0.4*(ts**2)*tf - 1.6*s*(ts**2)*tf + 1.2*sf*(ts**2)*tf - 0.8*ts*(tf**2) - 1.2*s*ts*(tf**2) + 1.2*sf*ts*(tf**2)
-        e =  2*j*ts*(tf**2) + 2*j*(ts**2)*tf - 0.4*(ts**2)*(tf**2) - 0.8*s*(ts**2)*(tf**2) + 0.8*sf*(ts**2)*(tf**2)
-        f =  j*(ts**2)*(tf**2) 
-    
-        tm = np.roots([a,b,c,d,e,f])
-        if tm.size == 0 or tm[0] == 0:
-            tm = "None"
-        else:
-            tm=tm[0]
-            tm_vals.append(tm)
+    Parameters
+    ----------
+    j0 : float
+        Spectral density at the 0 frequency, J(0).
+    s2 : float
+        Generalized order parameter.
+    tau_e : float
+        Effective correlation time associated with the rate of the motion of
+        individual bond vectors.
 
-        buff = "residue "+str(res)+" = "+str(tm)+'\n'
-        fo.write(buff)
-                                                                     
-        if i == len(mfa[0])-1:
-            buff = "Average tm [s] = "+str(np.average(tm_vals))+'\n'
-            fo.write(buff)
-            buff = "Std dev tm [s] = "+str(np.std(tm_vals))+'\n'
-            fo.write(buff)
+    Returns
+    ----------
+    tau_m : float
+        Calculated value of tau_m with given parameters.
+    """
+    a = -0.4 * s2
+    b = j0 - 1.2 * s2 * tau_e - 0.4 * tau_e
+    c = 2.0 * j0 * tau_e - 0.4 * tau_e**2
+    d = j0 * tau_e**2
 
-    fo.close()
+    tau_m = np.roots([a, b, c, d])
+    tau_m = tau_m[np.isreal(tau_m) & (tau_m > 0)].real
+    tau_m = tau_m[0] if tau_m.size > 0 else np.nan
+
+    return tau_m
 
 
-# MAIN PROGRAM
+def taum_eqn3(j0, s2, s2_f, tau_f, tau_s):
+    """Tau_m [s] value calculated from the spectral density function with slow or fast motions.
+
+    Parameters
+    ----------
+    j0 : float
+        Spectral density at the 0 frequency, J(0).
+    s2 : float
+        Generalized order parameter.
+    s2_f : float
+        Generalized order parameter of bond vectors that undergo fast motions.
+    s2_s : float
+        Generalized order parameter of bond vectors that undergo slow motions.
+    tau_f : float
+        Effective correlation time associated with the rate of the motion of
+        individual bond vectors that undergo fast motions.
+    tau_s : float
+        Effective correlation time associated with the rate of the motion of
+        individual bond vectors that undergo slow motions.
+
+    Returns
+    ----------
+    tau_m : float
+        Calculated value of tau_m with given parameters.
+    """
+    a = -0.4 * s2
+    b = j0 - 1.2 * s2 * tau_s - 0.4 * s2_f * tau_s - \
+        0.4 * tau_f - 0.8 * s2 * tau_f + 0.4 * s2_f * tau_f
+    c = 2.0 * j0 * tau_s - 0.8 * s2 * (tau_s**2) + 0.4 * s2_f * (tau_s**2) + 2 * j0 * tau_f - 0.4 * (tau_f**2) - 0.4 * s2 * (
+        tau_f**2) + 0.4 * s2_f * (tau_f**2) - 0.8 * tau_s * tau_f - 1.6 * s2 * tau_s * tau_f + 1.6 * s2_f * tau_s * tau_f
+    d = j0 * (tau_s**2) + j0 * (tau_f**2) + 4 * j0 * tau_s * tau_f - 0.4 * (tau_s**2) * tau_f - 1.6 * s2 * (tau_s**2) * tau_f + \
+        1.2 * s2_f * (tau_s**2) * tau_f - 0.8 * tau_s * (tau_f**2) - 1.2 * s2 * tau_s * (tau_f**2) + 1.2 * s2_f * tau_s * (tau_f**2)
+    e = 2 * j0 * tau_s * (tau_f**2) + 2 * j0 * (tau_s**2) * tau_f - 0.4 * (tau_s**2) * (
+        tau_f**2) - 0.8 * s2 * (tau_s**2) * (tau_f**2) + 0.8 * s2_f * (tau_s**2) * (tau_f**2)
+    f = j0 * (tau_s**2) * (tau_f**2)
+
+    tau_m = np.roots([a, b, c, d, e, f])
+    if tau_m.size == 0 or tau_m[0] == 0:
+        tau_m = np.nan
+    else:
+        tau_m = tau_m[0]
+
+    return tau_m
+
+
+def get_tau(mfa_data):
+    """Get tau_m for each residue using Equations 2 and 3.
+
+    Parameters
+    ----------
+    mfa_data : dict
+        Dictionary containing the MFA results for each residue.
+        Keys : resid, j0, s2, s2_f, s2_s, tau_e, tau_f, tau_s
+
+    Returns
+    -------
+    tau_eq2 : list (float)
+        tau_m values calculated from Equation 2.
+    tau_eq3 : list (float)
+        tau_m values calculated from Equation 3.
+    """
+    tau_eq2 = []
+    tau_eq3 = []
+
+    for idx in range(len(mfa_data['resid'])):
+        params_eq2 = [
+            mfa_data['j0'][idx],
+            mfa_data['s2'][idx],
+            mfa_data['tau_e'][idx]
+        ]
+        params_eq3 = [
+            mfa_data['j0'][idx],
+            mfa_data['s2'][idx],
+            mfa_data['s2_f'][idx],
+            mfa_data['tau_f'][idx],
+            mfa_data['tau_s'][idx]
+        ]
+        tau_eq2.append(taum_eqn2(*params_eq2))
+        tau_eq3.append(taum_eqn3(*params_eq3))
+
+    return tau_eq2, tau_eq3
+
+
+def write_output(j0_file, tau_eq2, tau_eq3):
+    """Write results to output file.
+
+    Parameters
+    ----------
+    j0_file : str
+        Path to the J(0) results file.
+    tau_eq2 : list (float)
+        tau_m values calculated from Equation 2.
+    tau_eq3 : list (float)
+        tau_m values calculated from Equation 3.
+
+    Returns
+    -------
+    None
+    """
+    output_file_1 = f"{j0_file[:-4]}-tm-eqn2.out"
+    output_file_2 = f"{j0_file[:-4]}-tm-eqn3.out"
+
+    with open(output_file_1, "w") as file:
+        file.write(
+            f"tau_m [s] values calculated with no fast or slow motions\n")
+        file.write(f"Average: {np.nanmean(tau_eq2):.6e}\n")
+        file.write(f"Std Dev: {np.nanstd(tau_eq2):.6e}\n\n")
+        for idx in range(len(tau_eq2)):
+            file.write(f"residue {idx + 1} = {tau_eq2[idx]:.6e}\n")
+
+    with open(output_file_2, "w") as file:
+        file.write(f"tau_m [s] values calculated with fast and slow motions\n")
+        file.write(f"Average: {np.nanmean(tau_eq3):.6e}\n")
+        file.write(f"Std Dev: {np.nanstd(tau_eq3):.6e}\n\n")
+        for idx in range(len(tau_eq3)):
+            file.write(f"residue {idx + 1} = {tau_eq3[idx]:.6e}\n")
+
+    return None
+
+
 def main():
-    datfile = check()
-    mfa = getmfadata(datfile)
-    tm_1(datfile,mfa)
-    tm_2(datfile,mfa)
+    """Main Program."""
+    args = parse_arguments()
+    mfa_data = get_mfa(args.j0_file)
+    tau1, tau2 = get_tau(mfa_data)
+    write_output(args.j0_file, tau1, tau2)
 
 
-
-# RUN PROGRAM
-main()
-
+if __name__ == "__main__":
+    main()
