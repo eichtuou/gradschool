@@ -4,6 +4,7 @@ to a peak list file to be read by TopSpin [PEAKS].
 
 import argparse
 
+
 def parse_arguments():
     """Validate input arguments
 
@@ -12,9 +13,17 @@ def parse_arguments():
     args : argparse obj
         Parsed command-line arguments.
     """
-    parser = argparse.ArgumentParser(description="Convert NMR peak list file from LIST format to PEAKS format.")
-    parser.add_argument("listfile", type=str, help="Path to the input LIST file.")
-    parser.add_argument("--peaksfile", type=str, default="out.peaks", help="Path to the output PEAKS file.")
+    parser = argparse.ArgumentParser(
+        description="Convert NMR peak list file from LIST format to PEAKS format.")
+    parser.add_argument(
+        "listfile",
+        type=str,
+        help="Path to the input LIST file.")
+    parser.add_argument(
+        "--peaksfile",
+        type=str,
+        default="out.peaks",
+        help="Path to the output PEAKS file.")
 
     args = parser.parse_args()
 
