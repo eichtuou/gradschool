@@ -14,7 +14,7 @@ organization, (2) data analysis and visualization, (3) generation of HPC input
 files and submission scripts, and (4) file type translation.
 
 For my Ph.D. in Biophysical Chemistry I studied two isomers of a
-multifunctional protein primarily via Numclear Magnetic Resonance (NMR) 
+multifunctional protein primarily via Nuclear Magnetic Resonance (NMR) 
 and Molecular Dynamics (MD) simulations and molecular docking calculations.
 For these I used NAMD, CHARMM, AutoDock Vina, PyMol and VMD, together with 
 more Python and BASH for the same applications previously mentioned above. 
